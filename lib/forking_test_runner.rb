@@ -84,16 +84,12 @@ module ForkingTestRunner
     private
 
     def toggle_minitest_autorun(value)
-      begin
-        require 'minitest/test' # only exists on > 5
-      rescue LoadError
-        require 'minitest/unit'
-      end
-      klass = if defined?(Minitest::Test)
-        Minitest
-      else
-        # require 'minitest/unit'
+      klass = begin
+        require 'minitest/unit' # only exists on 4
         MiniTest::Unit
+      rescue LoadError
+        require 'minitest/test' # exists on 5 and 4 with minitest-rails
+        Minitest
       end
       klass.class_variable_set("@@installed_at_exit", !value)
       klass.autorun if value
