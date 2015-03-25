@@ -8,7 +8,8 @@ describe ForkingTestRunner do
   end
 
   def sh(command, options={})
-    gemfile = "#{root}/#{ENV["BUNDLE_GEMFILE"] || "Gemfile"}"
+    gemfile = ENV["BUNDLE_GEMFILE"] || "Gemfile"
+    gemfile = "#{root}/#{gemfile}" unless gemfile.start_with?("/") # TODO wwtd should use absolute gemfiles
     result = Bundler.with_clean_env do
       ENV["BUNDLE_GEMFILE"] = gemfile
       `#{command} #{"2>&1" unless options[:keep_output]}`
