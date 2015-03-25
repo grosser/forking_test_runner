@@ -1,8 +1,61 @@
 module ForkingTestRunner
   class << self
-    # This forces Rails to load all fixtures, then prevents it from deleting and then
-    # re-inserting all fixtures when a test is run.
-    # Saves us a couple of seconds when the test includes a call to fixtures :all.
+    def cli(argv)
+      disable_minitest_autorun
+      load_test_env(delete_argv("--helper", argv))
+
+      runtime_log = delete_argv("--runtime-log", argv)
+      tests = find_tests_for_group(argv, runtime_log)
+      puts "Running tests #{tests.map(&:first).join(" ")}"
+
+      show_time = tests[0][1]
+
+      clear = "------"
+      results = tests.map do |file, expected|
+        puts "#{clear} >>> #{file}"
+        success = false
+        time = Benchmark.realtime do
+          success = run_test(file)
+        end
+        puts "Time: expected #{expected.round(2)}, actual #{time.round(2)}" if show_time
+        puts "#{clear} <<< #{file} ---- #{success ? "OK" : "Failed"}"
+        [file, time, expected, success]
+      end
+
+      puts "\nResults:"
+      puts results.map { |f,_,_,r| "#{f}: #{r ? "OK" : "Fail"}"}
+
+      if show_time
+        puts "Time: #{results.map { |_,time,expected,_| time - expected }.inject(:+).to_f.round(2)} diff to expected"
+      end
+
+      # log runtime and then curl it into the runtime log location
+      if ENV["RECORD_RUNTIME"]
+        require 'tempfile'
+        slug = ENV.fetch("TRAVIS_REPO_SLUG").sub("/", "-")
+        id = ENV.fetch("TRAVIS_BUILD_NUMBER")
+        url = "https://amend.herokuapp.com/amend/#{slug}-#{id}"
+        data = results.map { |f,time,_,_| "#{f}:#{time.round(2)}" }.join("\n") << "\n"
+        Tempfile.open("runtime.log") do |f|
+          f.write(data)
+          f.close
+          result = `curl -X POST --data-binary @#{f.path} #{url}`
+          puts "amended runtime log\ncurl #{url} | sort > #{runtime_log}\nStatus: #{$?.success?}\nResponse: #{result}"
+        end
+      end
+
+      results.map(&:last).all? ? 0 : 1
+    end
+
+    private
+
+    def load_test_env(helper=nil)
+      helper = helper || "test/test_helper"
+      require "./#{helper}"
+    end
+
+    # This forces Rails to load all fixtures, then prevents it from
+    # "deleting and re-inserting all fixtures" when a new connection is used (forked).
     def preload_fixtures
       return if @preloaded
       @preloaded = true
@@ -28,7 +81,7 @@ module ForkingTestRunner
       toggle_minitest_autorun false
     end
 
-    def enabled_minitest_autorun
+    def enable_minitest_autorun
       toggle_minitest_autorun true
     end
 
@@ -38,7 +91,7 @@ module ForkingTestRunner
       child = fork do
         key = (ActiveRecord::VERSION::STRING >= "4.1.0" ? :test : "test")
         ActiveRecord::Base.establish_connection key
-        enabled_minitest_autorun
+        enable_minitest_autorun
         require "./#{file}"
       end
       Process.wait(child)
@@ -80,8 +133,6 @@ module ForkingTestRunner
       argv.delete_at(index)
       argv.delete_at(index)
     end
-
-    private
 
     def toggle_minitest_autorun(value)
       klass = begin
