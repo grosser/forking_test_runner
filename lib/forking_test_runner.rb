@@ -8,18 +8,18 @@ module ForkingTestRunner
       @preloaded = true
 
       # reuse our pre-loaded fixtures even if we have a different connection
-      class << ActiveRecord::Fixtures
+      class << ActiveRecord::FixtureSet
         def cache_for_connection(connection)
-          ActiveRecord::Fixtures.class_variable_get(:@@all_cached_fixtures)[:unique]
+          ActiveRecord::FixtureSet.class_variable_get(:@@all_cached_fixtures)[:unique]
         end
       end
 
       ActiveSupport::TestCase.fixtures :all
 
-      ActiveRecord::Fixtures.create_fixtures(
-        ActiveRecord::TestCase.fixture_path,
-        ActiveRecord::TestCase.fixture_table_names,
-        ActiveRecord::TestCase.fixture_class_names
+      ActiveRecord::FixtureSet.create_fixtures(
+        ActiveSupport::TestCase.fixture_path,
+        ActiveSupport::TestCase.fixture_table_names,
+        ActiveSupport::TestCase.fixture_class_names
       )
     end
 

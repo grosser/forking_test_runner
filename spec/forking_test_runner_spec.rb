@@ -2,7 +2,8 @@ require "spec_helper"
 
 describe ForkingTestRunner do
   def runner(command, options={})
-    sh("#{Bundler.root}/bin/forking-test-runner #{command}", options)
+    root = File.expand_path("../../", __FILE__)
+    sh("#{root}/bin/forking-test-runner #{command}", options)
   end
 
   def sh(command, options={})
@@ -32,7 +33,7 @@ describe ForkingTestRunner do
     result = runner("test")
     result.should include "simple_test.rb"
     result.should include "pollution_test.rb"
-    result.should_not include "0 tests" # minitest was not disabled
+    result.should_not include "0 tests " # minitest was not disabled
     result.should_not include "Time:" # no runtime log -> no time info
   end
 
