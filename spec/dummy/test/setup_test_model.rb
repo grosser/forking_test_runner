@@ -8,7 +8,8 @@ ActiveRecord::Base.configurations = {
   }
 }
 
-ActiveRecord::Base.establish_connection 'test'
+key = (ActiveRecord::VERSION::STRING >= "4.1.0" ? :test : "test")
+ActiveRecord::Base.establish_connection key
 
 # create tables
 ActiveRecord::Schema.verbose = false

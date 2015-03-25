@@ -7,16 +7,16 @@ module ForkingTestRunner
       return if @preloaded
       @preloaded = true
 
+      fixtures = (ActiveSupport::VERSION::MAJOR == 3 ? ActiveRecord::Fixtures : ActiveRecord::FixtureSet)
+
       # reuse our pre-loaded fixtures even if we have a different connection
-      class << ActiveRecord::FixtureSet
-        def cache_for_connection(connection)
-          ActiveRecord::FixtureSet.class_variable_get(:@@all_cached_fixtures)[:unique]
-        end
+      fixtures.send(:define_method, :cache_for_connection) do |_connection|
+        fixtures.class_variable_get(:@@all_cached_fixtures)[:unique]
       end
 
       ActiveSupport::TestCase.fixtures :all
 
-      ActiveRecord::FixtureSet.create_fixtures(
+      fixtures.create_fixtures(
         ActiveSupport::TestCase.fixture_path,
         ActiveSupport::TestCase.fixture_table_names,
         ActiveSupport::TestCase.fixture_class_names
@@ -25,20 +25,19 @@ module ForkingTestRunner
 
     # don't let minitest setup another exit hook
     def disable_minitest_autorun
-      require 'minitest/unit'
-      MiniTest::Unit.class_variable_set("@@installed_at_exit", true)
+      toggle_minitest_autorun false
     end
 
     def enabled_minitest_autorun
-      MiniTest::Unit.class_variable_set(:@@installed_at_exit, false)
-      MiniTest::Unit.autorun
+      toggle_minitest_autorun true
     end
 
     def run_test(file)
       preload_fixtures
       ActiveRecord::Base.connection.disconnect!
       child = fork do
-        ActiveRecord::Base.establish_connection 'test'
+        key = (ActiveRecord::VERSION::STRING >= "4.1.0" ? :test : "test")
+        ActiveRecord::Base.establish_connection key
         enabled_minitest_autorun
         require "./#{file}"
       end
@@ -80,6 +79,24 @@ module ForkingTestRunner
       return unless index = argv.index(arg)
       argv.delete_at(index)
       argv.delete_at(index)
+    end
+
+    private
+
+    def toggle_minitest_autorun(value)
+      begin
+        require 'minitest/test' # only exists on > 5
+      rescue LoadError
+        require 'minitest/unit'
+      end
+      klass = if defined?(Minitest::Test)
+        Minitest
+      else
+        # require 'minitest/unit'
+        MiniTest::Unit
+      end
+      klass.class_variable_set("@@installed_at_exit", !value)
+      klass.autorun if value
     end
   end
 end

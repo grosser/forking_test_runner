@@ -1,13 +1,18 @@
 require "spec_helper"
 
 describe ForkingTestRunner do
+  let(:root) { File.expand_path("../../", __FILE__) }
+
   def runner(command, options={})
-    root = File.expand_path("../../", __FILE__)
-    sh("#{root}/bin/forking-test-runner #{command}", options)
+    sh("bundle exec #{root}/bin/forking-test-runner #{command}", options)
   end
 
   def sh(command, options={})
-    result = Bundler.with_clean_env { `#{command} #{"2>&1" unless options[:keep_output]}` }
+    gemfile = "#{root}/#{ENV["BUNDLE_GEMFILE"] || "Gemfile"}"
+    result = Bundler.with_clean_env do
+      ENV["BUNDLE_GEMFILE"] = gemfile
+      `#{command} #{"2>&1" unless options[:keep_output]}`
+    end
     raise "#{options[:fail] ? "SUCCESS" : "FAIL"} #{command}\n#{result}" if $?.success? == !!options[:fail]
     result
   end
