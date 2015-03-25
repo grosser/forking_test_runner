@@ -1,4 +1,5 @@
 require "spec_helper"
+require "tempfile"
 
 describe ForkingTestRunner do
   let(:root) { File.expand_path("../../", __FILE__) }
@@ -25,6 +26,22 @@ describe ForkingTestRunner do
     yield
   ensure
     old.each { |k,v| env[k] = v }
+  end
+
+  def assert_correct_runtime(result)
+    result.gsub!(/:[\d\.]+/, "")
+    result.split("\n").sort.should == [
+      "test/another_test.rb",
+      "test/pollution_test.rb",
+      "test/simple_test.rb"
+    ]
+  end
+
+  def restoring(file)
+    content = File.read(file)
+    yield
+  ensure
+    File.write(file, content)
   end
 
   around do |test|
@@ -58,16 +75,19 @@ describe ForkingTestRunner do
 
   # this test needs internet access
   it "records runtime" do
-    with_env "RECORD_RUNTIME" => "1", "TRAVIS_REPO_SLUG" => "test-slug", "TRAVIS_BUILD_NUMBER" => "build#{rand(999999)}" do
-      result = runner("test")
+    with_env "TRAVIS_REPO_SLUG" => "test-slug", "TRAVIS_BUILD_NUMBER" => "build#{rand(999999)}" do
+      result = runner("test --record-runtime amend")
       url = result[/curl \S+/] || raise("no command found")
       result = sh "curl --silent #{url}"
-      result.gsub!(/:[\d\.]+/, "")
-      result.split("\n").sort.should == [
-        "test/another_test.rb",
-        "test/pollution_test.rb",
-        "test/simple_test.rb"
-      ]
+      assert_correct_runtime(result)
+    end
+  end
+
+  it "records simple runtime to disc" do
+    restoring "runtime.log" do
+      runner("test --record-runtime simple")
+      result = File.read("runtime.log")
+      assert_correct_runtime(result)
     end
   end
 

@@ -48,10 +48,10 @@ forking-test-runner test --group 1 --groups 20
 
 ### Make test groups take the same time
 
-Record test runtime (on your CI)
+Record test runtime (on your CI, see other modes below)
 
 ```
-RECORD_RUNTIME=1 forking-test-runner test --group 1 --groups 20
+forking-test-runner test --group 1 --groups 20 --record-runtime amend
 ```
 
 Then download the runtime + commit it to your repo + run with runtime
@@ -69,6 +69,9 @@ Atm only supports minitest, rspec and others should be easy to add ...
 --helper test/helpers/test_helper.rb
 --group GROUP # starts at 1
 --groups GROUPS
+--record-runtime
+    simple # write to local disc at location from --runtime-log or runtime.log
+    amend # write from multiple remote workers via http://github.com/grosser/amend, needs TRAVIS_REPO_SLUG + TRAVIS_BUILD_NUMBER
 ```
 
 Author
