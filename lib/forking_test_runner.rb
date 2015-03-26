@@ -111,7 +111,8 @@ module ForkingTestRunner
       fixtures = (ActiveSupport::VERSION::MAJOR == 3 ? ActiveRecord::Fixtures : ActiveRecord::FixtureSet)
 
       # reuse our pre-loaded fixtures even if we have a different connection
-      fixtures.send(:define_method, :cache_for_connection) do |_connection|
+      fixtures_eigenclass = class << fixtures; self; end
+      fixtures_eigenclass.send(:define_method, :cache_for_connection) do |_connection|
         fixtures.class_variable_get(:@@all_cached_fixtures)[:unique]
       end
 

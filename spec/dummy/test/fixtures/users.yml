@@ -1,2 +1,3 @@
+<% $fixtures_loaded ||= 0; $fixtures_loaded += 1 %>
 foo:
   name: Foo
