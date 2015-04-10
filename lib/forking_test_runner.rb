@@ -172,11 +172,12 @@ module ForkingTestRunner
     end
 
     def toggle_minitest_autorun(value)
-      klass = begin
-        require 'minitest/unit' # only exists on 4
+      gem 'minitest'
+      klass = if Gem.loaded_specs["minitest"].version.segments.first == 4 # 4.x
+        require 'minitest/unit'
         MiniTest::Unit
-      rescue LoadError
-        require 'minitest/test' # exists on 5 and 4 with minitest-rails
+      else
+        require 'minitest'
         Minitest
       end
       klass.class_variable_set("@@installed_at_exit", !value)
