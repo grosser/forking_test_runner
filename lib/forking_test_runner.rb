@@ -137,14 +137,23 @@ module ForkingTestRunner
     def run_test(file)
       preload_fixtures
       ActiveRecord::Base.connection.disconnect!
-      child = fork do
-        key = (ActiveRecord::VERSION::STRING >= "4.1.0" ? :test : "test")
-        ActiveRecord::Base.establish_connection key
-        enable_minitest_autorun
-        require "./#{file}"
+      change_program_name_to file do
+        child = fork do
+          key = (ActiveRecord::VERSION::STRING >= "4.1.0" ? :test : "test")
+          ActiveRecord::Base.establish_connection key
+          enable_minitest_autorun
+          require "./#{file}"
+        end
+        Process.wait(child)
       end
-      Process.wait(child)
       $?.success?
+    end
+
+    def change_program_name_to(name)
+      old, $0 = $0, name
+      yield
+    ensure
+      $0 = old
     end
 
     def find_tests_for_group(group, group_count, tests, runtime_log)

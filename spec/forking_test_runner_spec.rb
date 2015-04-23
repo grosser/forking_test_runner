@@ -72,6 +72,11 @@ describe ForkingTestRunner do
     result.should include "SimpleTest#test_transaction_0 ="
   end
 
+  it "switches program name so rerun scripts can use the file name" do
+    result = runner("test/show_program_name.rb")
+    result.should include "PROGRAM IS test/show_program_name.rb YEAH"
+  end
+
   # this test needs internet access
   it "records runtime" do
     with_env "TRAVIS_REPO_SLUG" => "test-slug", "TRAVIS_BUILD_NUMBER" => "build#{rand(999999)}" do
