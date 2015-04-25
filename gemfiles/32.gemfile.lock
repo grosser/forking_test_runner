@@ -1,7 +1,7 @@
 PATH
   remote: ../
   specs:
-    forking_test_runner (0.3.0)
+    forking_test_runner (0.3.1)
       activerecord (< 5.0.0)
       parallel_tests (>= 1.3.7)
 

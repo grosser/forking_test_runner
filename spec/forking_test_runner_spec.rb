@@ -101,4 +101,8 @@ describe ForkingTestRunner do
     result.should include "Time: expected 1.0, actual 0." # per test time info
     result.should include "diff to expected" # global summary
   end
+
+  it "can run with rspec" do
+    runner("spec --rspec").should include "1 example, 0 failures"
+  end
 end

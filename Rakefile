@@ -6,5 +6,5 @@ require "wwtd/tasks"
 task default: "wwtd:local"
 
 task :spec do
-  sh "rspec spec/"
+  sh "rspec spec/forking_test_runner_spec.rb"
 end

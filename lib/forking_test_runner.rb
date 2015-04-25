@@ -1,9 +1,13 @@
+require 'benchmark'
+
 module ForkingTestRunner
   CLEAR = "------"
 
   class << self
     def cli(argv)
-      disable_minitest_autorun
+      @rspec = delete_argv("--rspec", argv, arg: false)
+
+      disable_test_autorun
       load_test_env(delete_argv("--helper", argv))
 
       # figure out what we need to run
@@ -98,7 +102,8 @@ module ForkingTestRunner
     end
 
     def load_test_env(helper=nil)
-      helper = helper || "test/test_helper"
+      require 'rspec' if @rspec
+      helper = helper || (@rspec ? "spec/spec_helper" : "test/test_helper")
       require "./#{helper}"
     end
 
@@ -126,12 +131,12 @@ module ForkingTestRunner
     end
 
     # don't let minitest setup another exit hook
-    def disable_minitest_autorun
-      toggle_minitest_autorun false
+    def disable_test_autorun
+      toggle_test_autorun false
     end
 
-    def enable_minitest_autorun
-      toggle_minitest_autorun true
+    def enable_test_autorun(file)
+      toggle_test_autorun true, file
     end
 
     def run_test(file)
@@ -141,8 +146,7 @@ module ForkingTestRunner
         child = fork do
           key = (ActiveRecord::VERSION::STRING >= "4.1.0" ? :test : "test")
           ActiveRecord::Base.establish_connection key
-          enable_minitest_autorun
-          require "./#{file}"
+          enable_test_autorun(file)
         end
         Process.wait(child)
       end
@@ -174,23 +178,47 @@ module ForkingTestRunner
       group.map { |test| [test, (tests[test] if group_by == :runtime)] }
     end
 
-    def delete_argv(name, argv)
+    def delete_argv(name, argv, arg: true)
       return unless index = argv.index(name)
       argv.delete_at(index)
-      argv.delete_at(index) || raise("Missing argument for #{name}")
+      if arg
+        argv.delete_at(index) || raise("Missing argument for #{name}")
+      else
+        true
+      end
     end
 
-    def toggle_minitest_autorun(value)
-      gem 'minitest'
-      klass = if Gem.loaded_specs["minitest"].version.segments.first == 4 # 4.x
-        require 'minitest/unit'
-        MiniTest::Unit
+    def toggle_test_autorun(value, file=nil)
+      if @rspec
+        if value
+          RSpec::Core::Runner.run([file])
+        else
+          require 'bundler/setup'
+          require 'rspec'
+          RSpec::Core::Runner.disable_autorun! # disable autorun in case the user left it in spec_helper.rb
+          $LOAD_PATH.unshift "./lib"
+          $LOAD_PATH.unshift "./spec"
+        end
       else
-        require 'minitest'
-        Minitest
+        @minitest_class ||= begin
+          require 'bundler/setup'
+          gem 'minitest'
+          if Gem.loaded_specs["minitest"].version.segments.first == 4 # 4.x
+            require 'minitest/unit'
+            MiniTest::Unit
+          else
+            require 'minitest'
+            Minitest
+          end
+        end
+
+        @minitest_class.class_variable_set("@@installed_at_exit", !value)
+
+        if value
+          @minitest_class.autorun
+          require "./#{file}"
+        end
       end
-      klass.class_variable_set("@@installed_at_exit", !value)
-      klass.autorun if value
     end
   end
 end
