@@ -31,6 +31,7 @@ describe ForkingTestRunner do
     result.gsub!(/:[\d\.]+/, "")
     result.split("\n").sort.should == [
       "test/another_test.rb",
+      "test/no_ar_test.rb",
       "test/pollution_test.rb",
       "test/simple_test.rb"
     ]
