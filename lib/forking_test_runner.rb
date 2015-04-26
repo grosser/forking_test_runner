@@ -135,8 +135,8 @@ module ForkingTestRunner
       toggle_test_autorun false
     end
 
-    def enable_test_autorun(file)
-      toggle_test_autorun true, file
+    def enable_test_autorun(argv)
+      toggle_test_autorun true, argv
     end
 
     def run_test(file)
@@ -146,7 +146,7 @@ module ForkingTestRunner
         child = fork do
           key = (ActiveRecord::VERSION::STRING >= "4.1.0" ? :test : "test")
           ActiveRecord::Base.establish_connection key
-          enable_test_autorun(file)
+          enable_test_autorun([file] + ARGV)
         end
         Process.wait(child)
       end
@@ -188,10 +188,10 @@ module ForkingTestRunner
       end
     end
 
-    def toggle_test_autorun(value, file=nil)
+    def toggle_test_autorun(value, argv=nil)
       if @rspec
         if value
-          RSpec::Core::Runner.run([file])
+          RSpec::Core::Runner.run(argv)
         else
           require 'bundler/setup'
           require 'rspec'

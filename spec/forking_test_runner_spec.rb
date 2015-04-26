@@ -102,7 +102,13 @@ describe ForkingTestRunner do
     result.should include "diff to expected" # global summary
   end
 
-  it "can run with rspec" do
-    runner("spec --rspec").should include "1 example, 0 failures"
+  describe "rspec" do
+    it "can run" do
+      runner("spec --rspec").should include "1 example, 0 failures"
+    end
+
+    it "runs with arguments" do
+      runner("spec --rspec -- --seed 12345").should include "Randomized with seed 12345"
+    end
   end
 end
