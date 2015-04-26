@@ -74,6 +74,7 @@ Just add `--rspec`
 --record-runtime
     simple # write to local disc at location from --runtime-log or runtime.log
     amend # write from multiple remote workers via http://github.com/grosser/amend, needs TRAVIS_REPO_SLUG + TRAVIS_BUILD_NUMBER
+--rspec
 ```
 
 Author

@@ -93,9 +93,8 @@ module ForkingTestRunner
       else
         group = 1
         group_count = 1
-        size = argv.index("--") || argv.size
+        size = argv.index { |arg| arg.start_with? "-" } || argv.size
         tests = argv.slice!(0, size)
-        argv.shift # remove --
       end
 
       [group, group_count, tests]
@@ -135,8 +134,8 @@ module ForkingTestRunner
       toggle_test_autorun false
     end
 
-    def enable_test_autorun(argv)
-      toggle_test_autorun true, argv
+    def enable_test_autorun(file)
+      toggle_test_autorun true, file
     end
 
     def run_test(file)
@@ -146,7 +145,7 @@ module ForkingTestRunner
         child = fork do
           key = (ActiveRecord::VERSION::STRING >= "4.1.0" ? :test : "test")
           ActiveRecord::Base.establish_connection key
-          enable_test_autorun([file] + ARGV)
+          enable_test_autorun(file)
         end
         Process.wait(child)
       end
@@ -188,10 +187,10 @@ module ForkingTestRunner
       end
     end
 
-    def toggle_test_autorun(value, argv=nil)
+    def toggle_test_autorun(value, file=nil)
       if @rspec
         if value
-          RSpec::Core::Runner.run(argv)
+          RSpec::Core::Runner.run([file] + ARGV)
         else
           require 'bundler/setup'
           require 'rspec'

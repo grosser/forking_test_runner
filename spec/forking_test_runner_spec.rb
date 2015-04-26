@@ -68,7 +68,7 @@ describe ForkingTestRunner do
   end
 
   it "keeps unrelated args for the test runner" do
-    result = runner("test -- -v")
+    result = runner("test -v")
     result.should include "SimpleTest#test_transaction_0 ="
   end
 
@@ -108,7 +108,11 @@ describe ForkingTestRunner do
     end
 
     it "runs with arguments" do
-      runner("spec --rspec -- --seed 12345").should include "Randomized with seed 12345"
+      runner("spec --rspec --seed 12345").should include "Randomized with seed 12345"
+    end
+
+    it "runs with and groups" do
+      runner("spec --rspec --group 1 --groups 1 --seed 12345").should include "Randomized with seed 12345"
     end
   end
 end
