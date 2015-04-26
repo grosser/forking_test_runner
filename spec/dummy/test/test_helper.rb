@@ -1,2 +1,2 @@
 require_relative "../setup_test_model"
-require "minitest/autorun"
+require_relative "../test/no_ar_helper"

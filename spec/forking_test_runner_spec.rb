@@ -102,6 +102,12 @@ describe ForkingTestRunner do
     result.should include "diff to expected" # global summary
   end
 
+  it "can run without activerecord" do
+    result = runner("test/no_ar_test.rb --helper test/no_ar_helper.rb")
+    result.should include "1 tests, 1 assertions"
+    result.should include "AR IS UNDEFINED"
+  end
+
   describe "rspec" do
     it "can run" do
       runner("spec --rspec").should include "1 example, 0 failures"

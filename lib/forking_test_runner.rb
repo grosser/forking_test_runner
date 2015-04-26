@@ -6,6 +6,7 @@ module ForkingTestRunner
   class << self
     def cli(argv)
       @rspec = delete_argv("--rspec", argv, arg: false)
+      @no_fixtures = delete_argv("--no-fixtures", argv, arg: false)
 
       disable_test_autorun
       load_test_env(delete_argv("--helper", argv))
@@ -109,7 +110,7 @@ module ForkingTestRunner
     # This forces Rails to load all fixtures, then prevents it from
     # "deleting and re-inserting all fixtures" when a new connection is used (forked).
     def preload_fixtures
-      return if @preloaded
+      return if @preloaded || @no_fixtures
       @preloaded = true
 
       fixtures = (ActiveSupport::VERSION::MAJOR == 3 ? ActiveRecord::Fixtures : ActiveRecord::FixtureSet)
@@ -139,12 +140,16 @@ module ForkingTestRunner
     end
 
     def run_test(file)
-      preload_fixtures
-      ActiveRecord::Base.connection.disconnect!
+      if ar?
+        preload_fixtures
+        ActiveRecord::Base.connection.disconnect!
+      end
       change_program_name_to file do
         child = fork do
-          key = (ActiveRecord::VERSION::STRING >= "4.1.0" ? :test : "test")
-          ActiveRecord::Base.establish_connection key
+          if ar?
+            key = (ActiveRecord::VERSION::STRING >= "4.1.0" ? :test : "test")
+            ActiveRecord::Base.establish_connection key
+          end
           enable_test_autorun(file)
         end
         Process.wait(child)
@@ -185,6 +190,10 @@ module ForkingTestRunner
       else
         true
       end
+    end
+
+    def ar?
+      defined?(ActiveRecord::Base)
     end
 
     def toggle_test_autorun(value, file=nil)
