@@ -146,6 +146,7 @@ module ForkingTestRunner
       end
       change_program_name_to file do
         child = fork do
+          SimpleCov.pid = Process.pid if defined?(SimpleCov) && SimpleCov.respond_to?(:pid=) # trick simplecov into reporting in this fork
           if ar?
             key = (ActiveRecord::VERSION::STRING >= "4.1.0" ? :test : "test")
             ActiveRecord::Base.establish_connection key
