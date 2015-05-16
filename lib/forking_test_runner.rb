@@ -29,7 +29,7 @@ module ForkingTestRunner
 
       # pretty print the results
       puts "\nResults:"
-      puts results.map { |f,_,_,r| "#{f}: #{r ? "OK" : "Fail"}"}
+      puts results.sort_by { |_,_,_,r| !r }.map { |f,_,_,r| "#{f}: #{r ? "OK" : "Fail"}"}
 
       if runtime_log
         # show how long they ran vs expected
