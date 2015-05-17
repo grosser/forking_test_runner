@@ -105,7 +105,7 @@ describe ForkingTestRunner do
 
   it "can run without activerecord" do
     result = runner("test/no_ar_test.rb --helper test/no_ar_helper.rb")
-    result.should include "1 tests, 1 assertions"
+    result.should =~ /1 tests, 1 assertions|1 runs, 1 assertions/
     result.should include "AR IS UNDEFINED"
   end
 
