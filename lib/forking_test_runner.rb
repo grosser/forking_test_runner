@@ -29,7 +29,10 @@ module ForkingTestRunner
 
       # pretty print the results
       puts "\nResults:"
-      puts results.sort_by { |_,_,_,r| !r }.map { |f,_,_,r| "#{f}: #{r ? "OK" : "Fail"}"}
+      $stderr.puts results.map(&:last).inspect
+      puts results.
+        sort_by { |_,_,_,r| r ? 0 : 1 }. # failures should be last so they are easy to find
+        map { |f,_,_,r| "#{f}: #{r ? "OK" : "Fail"}"}
 
       if runtime_log
         # show how long they ran vs expected
