@@ -78,6 +78,11 @@ Just add `--rspec`
 --no-fixtures
 ```
 
+### Log aggregation
+
+To analyze all builds try this [streaming travis log analyzer](https://gist.github.com/grosser/df68f5461d45601f37f0)
+it will show all failures, the failed files and failed jobs.
+
 Author
 ======
 [Michael Grosser](http://grosser.it)<br/>
