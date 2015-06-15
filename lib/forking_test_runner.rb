@@ -7,8 +7,11 @@ module ForkingTestRunner
     def cli(argv)
       @rspec = delete_argv("--rspec", argv, arg: false)
       @no_fixtures = delete_argv("--no-fixtures", argv, arg: false)
+      @verbose = delete_argv("--verbose", argv, arg: false)
 
       disable_test_autorun
+      set_test_verbosity(@verbose)
+
       load_test_env(delete_argv("--helper", argv))
 
       # figure out what we need to run
@@ -16,14 +19,20 @@ module ForkingTestRunner
       runtime_log = delete_argv("--runtime-log", argv)
       group, group_count, tests = extract_group_args(argv)
       tests = find_tests_for_group(group, group_count, tests, runtime_log)
-      puts "Running tests #{tests.map(&:first).join(" ")}"
+
+      if @verbose
+        puts "Running tests #{tests.map(&:first).join(" ")}"
+      else
+        puts "Running #{tests.size} test files"
+      end
 
       # run all the tests
       results = tests.map do |file, expected|
-        puts "#{CLEAR} >>> #{file}"
+        print "#{CLEAR} >>> #{file} ... " #print instead of puts to let the first line of tests spill here
         time, success = benchmark { run_test(file) }
-        puts "Time: expected #{expected.round(2)}, actual #{time.round(2)}" if runtime_log
-        puts "#{CLEAR} <<< #{file} ---- #{success ? "OK" : "Failed"}"
+
+        puts "Time: expected #{expected.round(2)}, actual #{time.round(2)}" if runtime_log && @verbose
+        puts "#{CLEAR} <<< #{file} ---- #{success ? "OK" : "Failed"}" if @verbose
         [file, time, expected, success]
       end
 
@@ -199,6 +208,41 @@ module ForkingTestRunner
       defined?(ActiveRecord::Base)
     end
 
+    def minitest_class
+      @minitest_class ||= begin
+        require 'bundler/setup'
+        gem 'minitest'
+        if Gem.loaded_specs["minitest"].version.segments.first == 4 # 4.x
+          require 'minitest/unit'
+          MiniTest::Unit
+        else
+          require 'minitest'
+          Minitest
+        end
+      end
+    end
+
+    class MinitestOutputCapture
+      def puts(string = nil)
+        return if string.nil? || string =~ /^(# Running|Finished|(\d+) tests)/
+
+        $stdout.puts(string)
+      end
+
+      def print(*args)
+      end
+    end
+
+    def set_test_verbosity(verbose)
+      if @rspec
+      else
+        if !verbose
+          minitest_class.output = MinitestOutputCapture.new
+        end
+      end
+    end
+
+
     def toggle_test_autorun(value, file=nil)
       if @rspec
         if value
@@ -211,22 +255,10 @@ module ForkingTestRunner
           $LOAD_PATH.unshift "./spec"
         end
       else
-        @minitest_class ||= begin
-          require 'bundler/setup'
-          gem 'minitest'
-          if Gem.loaded_specs["minitest"].version.segments.first == 4 # 4.x
-            require 'minitest/unit'
-            MiniTest::Unit
-          else
-            require 'minitest'
-            Minitest
-          end
-        end
-
-        @minitest_class.class_variable_set("@@installed_at_exit", !value)
+        minitest_class.class_variable_set("@@installed_at_exit", !value)
 
         if value
-          @minitest_class.autorun
+          minitest_class.autorun
           require "./#{file}"
         end
       end
