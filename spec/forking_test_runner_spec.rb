@@ -5,6 +5,7 @@ describe ForkingTestRunner do
   let(:root) { File.expand_path("../../", __FILE__) }
 
   def runner(command, options={})
+    command += " --verbose" unless options[:verbose] == false
     sh("bundle exec #{root}/bin/forking-test-runner #{command}", options)
   end
 
