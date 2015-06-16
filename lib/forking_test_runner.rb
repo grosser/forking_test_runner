@@ -10,7 +10,6 @@ module ForkingTestRunner
       @verbose = delete_argv("--verbose", argv, arg: false)
 
       disable_test_autorun
-      set_test_verbosity(@verbose)
 
       load_test_env(delete_argv("--helper", argv))
 
@@ -28,14 +27,17 @@ module ForkingTestRunner
 
       # run all the tests
       results = tests.map do |file, expected|
-        print "#{CLEAR} >>> #{file} ... " #print instead of puts to let the first line of tests spill here
-        time, success = benchmark { run_test(file) }
+        puts "#{CLEAR} >>> #{file} "
+        time, success, output = benchmark { run_test(file) }
+
+        puts output if should_output?(output)
 
         puts "Time: expected #{expected.round(2)}, actual #{time.round(2)}" if runtime_log && @verbose
         puts "#{CLEAR} <<< #{file} ---- #{success ? "OK" : "Failed"}" if @verbose
         [file, time, expected, success]
       end
 
+      puts
       # pretty print the results
       puts "\nResults:"
       puts results.
@@ -60,12 +62,22 @@ module ForkingTestRunner
 
     private
 
+    def should_output?(output)
+      if output =~ /\d+ tests, \d+ assertions, (\d+) failures, (\d+) errors, \d+ skips/
+        failures, errors = $1, $2
+        failures.to_i + errors.to_i > 0
+      else
+        true
+      end
+    end
+
+
     def benchmark
       result = false
       time = Benchmark.realtime do
         result = yield
       end
-      return time, result
+      return [time, result].flatten
     end
 
     # log runtime via dumping or curling it into the runtime log location
@@ -155,8 +167,14 @@ module ForkingTestRunner
         preload_fixtures
         ActiveRecord::Base.connection.disconnect!
       end
+      output = nil
+
       change_program_name_to file do
+        rpipe, wpipe = IO.pipe
+
         child = fork do
+          rpipe.close
+          $stdout.reopen(wpipe)
           SimpleCov.pid = Process.pid if defined?(SimpleCov) && SimpleCov.respond_to?(:pid=) # trick simplecov into reporting in this fork
           if ar?
             key = (ActiveRecord::VERSION::STRING >= "4.1.0" ? :test : "test")
@@ -164,9 +182,13 @@ module ForkingTestRunner
           end
           enable_test_autorun(file)
         end
+
+        wpipe.close
+        output = rpipe.read
+
         Process.wait(child)
       end
-      $?.success?
+      [$?.success?, output]
     end
 
     def change_program_name_to(name)
@@ -221,27 +243,6 @@ module ForkingTestRunner
         end
       end
     end
-
-    class MinitestOutputCapture
-      def puts(string = nil)
-        return if string.nil? || string =~ /^(# Running|Finished|(\d+) tests)/
-
-        $stdout.puts(string)
-      end
-
-      def print(*args)
-      end
-    end
-
-    def set_test_verbosity(verbose)
-      if @rspec
-      else
-        if !verbose
-          minitest_class.output = MinitestOutputCapture.new
-        end
-      end
-    end
-
 
     def toggle_test_autorun(value, file=nil)
       if @rspec
