@@ -30,7 +30,7 @@ module ForkingTestRunner
         puts "#{CLEAR} >>> #{file} "
         time, success, output = benchmark { run_test(file) }
 
-        puts output if should_output?(output)
+        puts output if !success || @verbose
 
         puts "Time: expected #{expected.round(2)}, actual #{time.round(2)}" if runtime_log && @verbose
         puts "#{CLEAR} <<< #{file} ---- #{success ? "OK" : "Failed"}" if @verbose
@@ -61,16 +61,6 @@ module ForkingTestRunner
     end
 
     private
-
-    def should_output?(output)
-      if output =~ /\d+ tests, \d+ assertions, (\d+) failures, (\d+) errors, \d+ skips/
-        failures, errors = $1, $2
-        failures.to_i + errors.to_i > 0
-      else
-        true
-      end
-    end
-
 
     def benchmark
       result = false
