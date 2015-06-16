@@ -5,7 +5,6 @@ describe ForkingTestRunner do
   let(:root) { File.expand_path("../../", __FILE__) }
 
   def runner(command, options={})
-    command += " --verbose" unless options[:verbose] == false
     sh("bundle exec #{root}/bin/forking-test-runner #{command}", options)
   end
 
@@ -108,6 +107,18 @@ describe ForkingTestRunner do
     result = runner("test/no_ar_test.rb --helper test/no_ar_helper.rb")
     result.should =~ /1 tests, 1 assertions|1 runs, 1 assertions/
     result.should include "AR IS UNDEFINED"
+  end
+
+  it "can run quietly" do
+    result = runner("test --quiet")
+    result.should_not include "# Running tests:"
+  end
+
+  it "will output failures normally in quiet mode" do
+    with_env "FAIL_NOW" => "1" do
+      result = runner("test --quiet", fail: true)
+      result.should include "# Running tests:"
+    end
   end
 
   describe "rspec" do

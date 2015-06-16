@@ -7,7 +7,9 @@ module ForkingTestRunner
     def cli(argv)
       @rspec = delete_argv("--rspec", argv, arg: false)
       @no_fixtures = delete_argv("--no-fixtures", argv, arg: false)
-      @verbose = delete_argv("--verbose", argv, arg: false)
+
+      quiet = delete_argv("--quiet", argv, arg: false)
+      @verbose = !quiet
 
       disable_test_autorun
 
@@ -163,8 +165,11 @@ module ForkingTestRunner
         rpipe, wpipe = IO.pipe
 
         child = fork do
-          rpipe.close
-          $stdout.reopen(wpipe)
+          if !@verbose
+            rpipe.close
+            $stdout.reopen(wpipe)
+          end
+
           SimpleCov.pid = Process.pid if defined?(SimpleCov) && SimpleCov.respond_to?(:pid=) # trick simplecov into reporting in this fork
           if ar?
             key = (ActiveRecord::VERSION::STRING >= "4.1.0" ? :test : "test")
@@ -173,8 +178,10 @@ module ForkingTestRunner
           enable_test_autorun(file)
         end
 
-        wpipe.close
-        output = rpipe.read
+        if !@verbose
+          wpipe.close
+          output = rpipe.read
+        end
 
         Process.wait(child)
       end
