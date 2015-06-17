@@ -29,6 +29,8 @@ Results:
 test/another_test.rb: OK
 test/pollution_test.rb: OK
 test/simple_test.rb: OK
+
+9 assertions, 0 errors, 0 failures, 0 skips, 8 tests
 ```
 
 Usage
@@ -89,8 +91,12 @@ Just add `--rspec`
 To analyze all builds try this [streaming travis log analyzer](https://gist.github.com/grosser/df68f5461d45601f37f0)
 it will show all failures, the failed files and failed jobs.
 
-Author
-======
+Authors
+=======
+
+### [Contributors](https://github.com/grosser/forking_test_runner/contributors)
+ - [Ben Osheroff](https://github.com/osheroff)
+
 [Michael Grosser](http://grosser.it)<br/>
 michael@grosser.it<br/>
 License: MIT<br/>
