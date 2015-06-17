@@ -109,6 +109,18 @@ describe ForkingTestRunner do
     result.should include "AR IS UNDEFINED"
   end
 
+  it "can run quietly" do
+    result = runner("test --quiet")
+    result.should_not include "Finished"
+  end
+
+  it "will output failures normally in quiet mode" do
+    with_env "FAIL_NOW" => "1" do
+      result = runner("test --quiet", fail: true)
+      result.should include "Finished"
+    end
+  end
+
   describe "rspec" do
     it "can run" do
       runner("spec --rspec").should include "1 example, 0 failures"

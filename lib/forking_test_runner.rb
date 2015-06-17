@@ -8,7 +8,11 @@ module ForkingTestRunner
       @rspec = delete_argv("--rspec", argv, arg: false)
       @no_fixtures = delete_argv("--no-fixtures", argv, arg: false)
 
+      quiet = delete_argv("--quiet", argv, arg: false)
+      @verbose = !quiet
+
       disable_test_autorun
+
       load_test_env(delete_argv("--helper", argv))
 
       # figure out what we need to run
@@ -16,17 +20,26 @@ module ForkingTestRunner
       runtime_log = delete_argv("--runtime-log", argv)
       group, group_count, tests = extract_group_args(argv)
       tests = find_tests_for_group(group, group_count, tests, runtime_log)
-      puts "Running tests #{tests.map(&:first).join(" ")}"
+
+      if @verbose
+        puts "Running tests #{tests.map(&:first).join(" ")}"
+      else
+        puts "Running #{tests.size} test files"
+      end
 
       # run all the tests
       results = tests.map do |file, expected|
-        puts "#{CLEAR} >>> #{file}"
-        time, success = benchmark { run_test(file) }
-        puts "Time: expected #{expected.round(2)}, actual #{time.round(2)}" if runtime_log
-        puts "#{CLEAR} <<< #{file} ---- #{success ? "OK" : "Failed"}"
+        puts "#{CLEAR} >>> #{file} "
+        time, success, output = benchmark { run_test(file) }
+
+        puts output if !success || @verbose
+
+        puts "Time: expected #{expected.round(2)}, actual #{time.round(2)}" if runtime_log && @verbose
+        puts "#{CLEAR} <<< #{file} ---- #{success ? "OK" : "Failed"}" if @verbose
         [file, time, expected, success]
       end
 
+      puts
       # pretty print the results
       puts "\nResults:"
       puts results.
@@ -56,7 +69,7 @@ module ForkingTestRunner
       time = Benchmark.realtime do
         result = yield
       end
-      return time, result
+      return [time, result].flatten
     end
 
     # log runtime via dumping or curling it into the runtime log location
@@ -141,13 +154,38 @@ module ForkingTestRunner
       toggle_test_autorun true, file
     end
 
+    def fork_with_captured_output(tee_to_stdout)
+      rpipe, wpipe = IO.pipe
+
+      child = fork do
+        rpipe.close
+        $stdout.reopen(wpipe)
+
+        yield
+      end
+
+      wpipe.close
+
+      buffer = ""
+
+      while ch = rpipe.read(1)
+        buffer += ch
+        $stdout.write(ch) if tee_to_stdout
+      end
+
+      Process.wait(child)
+      buffer
+    end
+
     def run_test(file)
       if ar?
         preload_fixtures
         ActiveRecord::Base.connection.disconnect!
       end
+      output = nil
+
       change_program_name_to file do
-        child = fork do
+        output = fork_with_captured_output(@verbose) do
           SimpleCov.pid = Process.pid if defined?(SimpleCov) && SimpleCov.respond_to?(:pid=) # trick simplecov into reporting in this fork
           if ar?
             key = (ActiveRecord::VERSION::STRING >= "4.1.0" ? :test : "test")
@@ -155,9 +193,9 @@ module ForkingTestRunner
           end
           enable_test_autorun(file)
         end
-        Process.wait(child)
       end
-      $?.success?
+
+      [$?.success?, output]
     end
 
     def change_program_name_to(name)
@@ -199,6 +237,20 @@ module ForkingTestRunner
       defined?(ActiveRecord::Base)
     end
 
+    def minitest_class
+      @minitest_class ||= begin
+        require 'bundler/setup'
+        gem 'minitest'
+        if Gem.loaded_specs["minitest"].version.segments.first == 4 # 4.x
+          require 'minitest/unit'
+          MiniTest::Unit
+        else
+          require 'minitest'
+          Minitest
+        end
+      end
+    end
+
     def toggle_test_autorun(value, file=nil)
       if @rspec
         if value
@@ -211,22 +263,10 @@ module ForkingTestRunner
           $LOAD_PATH.unshift "./spec"
         end
       else
-        @minitest_class ||= begin
-          require 'bundler/setup'
-          gem 'minitest'
-          if Gem.loaded_specs["minitest"].version.segments.first == 4 # 4.x
-            require 'minitest/unit'
-            MiniTest::Unit
-          else
-            require 'minitest'
-            Minitest
-          end
-        end
-
-        @minitest_class.class_variable_set("@@installed_at_exit", !value)
+        minitest_class.class_variable_set("@@installed_at_exit", !value)
 
         if value
-          @minitest_class.autorun
+          minitest_class.autorun
           require "./#{file}"
         end
       end
