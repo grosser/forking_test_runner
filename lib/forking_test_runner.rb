@@ -154,6 +154,29 @@ module ForkingTestRunner
       toggle_test_autorun true, file
     end
 
+    def fork_with_captured_output(tee_to_stdout)
+      rpipe, wpipe = IO.pipe
+
+      child = fork do
+        rpipe.close
+        $stdout.reopen(wpipe)
+
+        yield
+      end
+
+      wpipe.close
+
+      buffer = ""
+
+      while ch = rpipe.read(1)
+        buffer += ch
+        $stdout.write(ch) if tee_to_stdout
+      end
+
+      Process.wait(child)
+      buffer
+    end
+
     def run_test(file)
       if ar?
         preload_fixtures
@@ -162,14 +185,7 @@ module ForkingTestRunner
       output = nil
 
       change_program_name_to file do
-        rpipe, wpipe = IO.pipe
-
-        child = fork do
-          if !@verbose
-            rpipe.close
-            $stdout.reopen(wpipe)
-          end
-
+        output = fork_with_captured_output(@verbose) do
           SimpleCov.pid = Process.pid if defined?(SimpleCov) && SimpleCov.respond_to?(:pid=) # trick simplecov into reporting in this fork
           if ar?
             key = (ActiveRecord::VERSION::STRING >= "4.1.0" ? :test : "test")
@@ -177,14 +193,8 @@ module ForkingTestRunner
           end
           enable_test_autorun(file)
         end
-
-        if !@verbose
-          wpipe.close
-          output = rpipe.read
-        end
-
-        Process.wait(child)
       end
+
       [$?.success?, output]
     end
 
