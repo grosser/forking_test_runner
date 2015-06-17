@@ -60,6 +60,12 @@ Then download the runtime + commit it to your repo + run with runtime
 forking-test-runner test --group 1 --groups 20 --runtime-log test/files/runtime.log
 ```
 
+### Only provide output from failed tests
+
+```
+forking-test-runner test --quiet
+```
+
 ### RSpec
 
 Just add `--rspec`
