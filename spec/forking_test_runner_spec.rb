@@ -56,6 +56,7 @@ describe ForkingTestRunner do
     result = runner("test")
     result.should include "simple_test.rb"
     result.should include "pollution_test.rb"
+    result.should include "9 assertions, 0 errors, 0 failures, 0 skips, 8 tests"
     result.should_not include "0 tests " # minitest was not disabled
     result.should_not include "Time:" # no runtime log -> no time info
   end
@@ -109,15 +110,17 @@ describe ForkingTestRunner do
     result.should include "AR IS UNDEFINED"
   end
 
-  it "can run quietly" do
-    result = runner("test --quiet")
-    result.should_not include "Finished"
-  end
+  describe "quiet mode" do
+    it "does not print test output" do
+      result = runner("test --quiet")
+      result.should_not include "Finished"
+    end
 
-  it "will output failures normally in quiet mode" do
-    with_env "FAIL_NOW" => "1" do
-      result = runner("test --quiet", fail: true)
-      result.should include "Finished"
+    it "prints failures" do
+      with_env "FAIL_NOW" => "1" do
+        result = runner("test --quiet", fail: true)
+        result.should include "Finished"
+      end
     end
   end
 

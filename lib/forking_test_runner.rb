@@ -37,22 +37,25 @@ module ForkingTestRunner
           puts "Time: expected #{expected.round(2)}, actual #{time.round(2)}" if runtime_log
           puts "#{CLEAR} <<< #{file} ---- #{success ? "OK" : "Failed"}"
         end
-        [file, time, expected, success]
+        [file, time, expected, output, success]
       end
-
-      puts
 
       unless @quiet
         # pretty print the results
         puts "\nResults:"
         puts results.
-          sort_by { |_,_,_,r| r ? 0 : 1 }. # failures should be last so they are easy to find
-          map { |f,_,_,r| "#{f}: #{r ? "OK" : "Fail"}"}
+          sort_by { |_,_,_,_,r| r ? 0 : 1 }. # failures should be last so they are easy to find
+          map { |f,_,_,_,r| "#{f}: #{r ? "OK" : "Fail"}"}
+        puts
       end
+
+      success = results.map(&:last).all?
+
+      puts colorize(success, summarize_results(results.map { |r| r[3] }))
 
       if runtime_log
         # show how long they ran vs expected
-        diff = results.map { |_,time,expected,_| time - expected }.inject(:+).to_f
+        diff = results.map { |_,time,expected| time - expected }.inject(:+).to_f
         puts "Time: #{diff.round(2)} diff to expected"
       end
 
@@ -63,10 +66,30 @@ module ForkingTestRunner
       end
 
       # exit with success or failure
-      results.map(&:last).all? ? 0 : 1
+      success ? 0 : 1
     end
 
     private
+
+    def colorize(green, string)
+      if $stdout.tty?
+        "\e[#{green ? 32 : 31}m#{string}\e[0m"
+      else
+        string
+      end
+    end
+
+    def summarize_results(results)
+      runner = if @rspec
+        require 'parallel_tests/test/runner'
+        ParallelTests::Test::Runner
+      else
+        require 'parallel_tests/rspec/runner'
+        ParallelTests::RSpec::Runner
+      end
+
+      runner.summarize_results(results.map { |r| runner.find_results(r) })
+    end
 
     def benchmark
       result = false
