@@ -8,8 +8,7 @@ module ForkingTestRunner
       @rspec = delete_argv("--rspec", argv, arg: false)
       @no_fixtures = delete_argv("--no-fixtures", argv, arg: false)
 
-      quiet = delete_argv("--quiet", argv, arg: false)
-      @verbose = !quiet
+      @quiet = delete_argv("--quiet", argv, arg: false)
 
       disable_test_autorun
 
@@ -21,10 +20,10 @@ module ForkingTestRunner
       group, group_count, tests = extract_group_args(argv)
       tests = find_tests_for_group(group, group_count, tests, runtime_log)
 
-      if @verbose
-        puts "Running tests #{tests.map(&:first).join(" ")}"
-      else
+      if @quiet
         puts "Running #{tests.size} test files"
+      else
+        puts "Running tests #{tests.map(&:first).join(" ")}"
       end
 
       # run all the tests
@@ -32,19 +31,24 @@ module ForkingTestRunner
         puts "#{CLEAR} >>> #{file} "
         time, success, output = benchmark { run_test(file) }
 
-        puts output if !success || @verbose
+        puts output if !success && @quiet
 
-        puts "Time: expected #{expected.round(2)}, actual #{time.round(2)}" if runtime_log && @verbose
-        puts "#{CLEAR} <<< #{file} ---- #{success ? "OK" : "Failed"}" if @verbose
+        unless @quiet
+          puts "Time: expected #{expected.round(2)}, actual #{time.round(2)}" if runtime_log
+          puts "#{CLEAR} <<< #{file} ---- #{success ? "OK" : "Failed"}"
+        end
         [file, time, expected, success]
       end
 
       puts
-      # pretty print the results
-      puts "\nResults:"
-      puts results.
-        sort_by { |_,_,_,r| r ? 0 : 1 }. # failures should be last so they are easy to find
-        map { |f,_,_,r| "#{f}: #{r ? "OK" : "Fail"}"}
+
+      unless @quiet
+        # pretty print the results
+        puts "\nResults:"
+        puts results.
+          sort_by { |_,_,_,r| r ? 0 : 1 }. # failures should be last so they are easy to find
+          map { |f,_,_,r| "#{f}: #{r ? "OK" : "Fail"}"}
+      end
 
       if runtime_log
         # show how long they ran vs expected
@@ -169,7 +173,7 @@ module ForkingTestRunner
       buffer = ""
 
       while ch = rpipe.read(1)
-        buffer += ch
+        buffer << ch
         $stdout.write(ch) if tee_to_stdout
       end
 
@@ -182,10 +186,9 @@ module ForkingTestRunner
         preload_fixtures
         ActiveRecord::Base.connection.disconnect!
       end
-      output = nil
 
-      change_program_name_to file do
-        output = fork_with_captured_output(@verbose) do
+      output = change_program_name_to file do
+        fork_with_captured_output(!@quiet) do
           SimpleCov.pid = Process.pid if defined?(SimpleCov) && SimpleCov.respond_to?(:pid=) # trick simplecov into reporting in this fork
           if ar?
             key = (ActiveRecord::VERSION::STRING >= "4.1.0" ? :test : "test")

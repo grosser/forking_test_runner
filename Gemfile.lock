@@ -63,3 +63,6 @@ DEPENDENCIES
   rspec
   sqlite3
   wwtd
+
+BUNDLED WITH
+   1.10.2
