@@ -33,10 +33,14 @@ module ForkingTestRunner
 
         puts output if !success && @quiet
 
-        unless @quiet
-          puts "Time: expected #{expected.round(2)}, actual #{time.round(2)}" if runtime_log
+        if runtime_log && !@quiet
+          puts "Time: expected #{expected.round(2)}, actual #{time.round(2)}"
+        end
+
+        if !success || !@quiet
           puts "#{CLEAR} <<< #{file} ---- #{success ? "OK" : "Failed"}"
         end
+
         [file, time, expected, output, success]
       end
 

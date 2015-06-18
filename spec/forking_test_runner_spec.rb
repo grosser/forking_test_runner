@@ -113,13 +113,17 @@ describe ForkingTestRunner do
   describe "quiet mode" do
     it "does not print test output" do
       result = runner("test --quiet")
+      result.should include ">>>"
       result.should_not include "Finished"
+      result.should_not include "<<<"
     end
 
     it "prints failures" do
       with_env "FAIL_NOW" => "1" do
         result = runner("test --quiet", fail: true)
+        result.should include ">>>"
         result.should include "Finished"
+        result.should include "<<<"
       end
     end
   end
