@@ -129,16 +129,24 @@ describe ForkingTestRunner do
   end
 
   describe "rspec" do
-    it "can run" do
-      runner("spec --rspec").should include "1 example, 0 failures"
+    it "can run passing tests" do
+      runner("spec/passing --rspec").should include "1 example, 0 failures"
+    end
+
+    it "returns a successful status code on passing tests" do
+      runner("spec/passing --rspec")
+    end
+
+    it "can run failing tests" do
+      runner("spec/failing --rspec", { fail: true }).should include "1 example, 1 failure"
     end
 
     it "runs with arguments" do
-      runner("spec --rspec --seed 12345").should include "Randomized with seed 12345"
+      runner("spec/passing --rspec --seed 12345").should include "Randomized with seed 12345"
     end
 
     it "runs with and groups" do
-      runner("spec --rspec --group 1 --groups 1 --seed 12345").should include "Randomized with seed 12345"
+      runner("spec/passing --rspec --group 1 --groups 1 --seed 12345").should include "Randomized with seed 12345"
     end
   end
 end
