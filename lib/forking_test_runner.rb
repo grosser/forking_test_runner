@@ -284,7 +284,7 @@ module ForkingTestRunner
     def toggle_test_autorun(value, file=nil)
       if @rspec
         if value
-          RSpec::Core::Runner.run([file] + ARGV)
+          exit(RSpec::Core::Runner.run([file] + ARGV))
         else
           require 'bundler/setup'
           require 'rspec'
