@@ -85,11 +85,11 @@ module ForkingTestRunner
 
     def summarize_results(results)
       runner = if @rspec
-        require 'parallel_tests/test/runner'
-        ParallelTests::Test::Runner
-      else
         require 'parallel_tests/rspec/runner'
         ParallelTests::RSpec::Runner
+      else
+        require 'parallel_tests/test/runner'
+        ParallelTests::Test::Runner
       end
 
       runner.summarize_results(results.map { |r| runner.find_results(r) })
@@ -284,7 +284,7 @@ module ForkingTestRunner
     def toggle_test_autorun(value, file=nil)
       if @rspec
         if value
-          RSpec::Core::Runner.run([file] + ARGV)
+          exit(RSpec::Core::Runner.run([file] + ARGV))
         else
           require 'bundler/setup'
           require 'rspec'
