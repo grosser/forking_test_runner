@@ -96,6 +96,7 @@ Authors
 
 ### [Contributors](https://github.com/grosser/forking_test_runner/contributors)
  - [Ben Osheroff](https://github.com/osheroff)
+ - [Barry Gordon](https://github.com/brrygrdn)
 
 [Michael Grosser](http://grosser.it)<br/>
 michael@grosser.it<br/>
