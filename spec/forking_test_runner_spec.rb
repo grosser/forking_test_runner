@@ -148,5 +148,19 @@ describe ForkingTestRunner do
     it "runs with and groups" do
       runner("spec/passing --rspec --group 1 --groups 1 --seed 12345").should include "Randomized with seed 12345"
     end
+
+    context 'when emitting debug' do
+      context 'without --quiet' do
+        let(:output_with_debug) { runner("spec/emitting --rspec") }
+
+        it { output_with_debug.should include('Warning: Code Under Test') }
+      end
+
+      context 'with --quiet' do
+        let(:output_with_debug) { runner("spec/emitting --rspec --quiet") }
+
+        it { output_with_debug.should include('Warning: Code Under Test') }
+      end
+    end
   end
 end
