@@ -61,7 +61,7 @@ describe ForkingTestRunner do
     result.should_not include "Time:" # no runtime log -> no time info
   end
 
-  it "runs tests without pollution" do
+  it "fails when a test fails" do
     with_env "FAIL_NOW" => "1" do
       result = runner("test", fail: true)
       result.should include "simple_test.rb ---- OK"
