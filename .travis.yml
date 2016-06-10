@@ -5,6 +5,8 @@ rvm:
   - 2.0.0
   - 2.1.5
 script: bundle exec rake spec
+branches:
+  only: master
 gemfile:
  - gemfiles/32.gemfile
  - gemfiles/40.gemfile
