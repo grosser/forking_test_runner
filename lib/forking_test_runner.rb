@@ -3,12 +3,52 @@ require 'benchmark'
 module ForkingTestRunner
   CLEAR = "------"
 
+  module CoverageCapture
+    def capture_coverage!
+      @capture_coverage = peek_result.dup
+    end
+
+    # override to add pre-fork captured coverage when someone asks for the results
+    def result
+      original = super
+      return original unless @capture_coverage
+
+      merged = original.dup
+      @capture_coverage.each do |file, coverage|
+        orig = merged[file]
+        merged[file] = if orig
+          merge_coverage(orig, coverage)
+        else
+          coverage
+        end
+      end
+      merged
+    end
+
+    private
+
+    # [nil,1,0] + [nil,nil,2] -> [nil,1,2]
+    def merge_coverage(a, b)
+      b.each_with_index.map do |b_count, i|
+        a_count = a[i]
+        (!b_count && !a_count) ? nil : b_count.to_i + a_count.to_i
+      end
+    end
+  end
+
   class << self
     def cli(argv)
       @rspec = delete_argv("--rspec", argv, arg: false)
       @no_fixtures = delete_argv("--no-fixtures", argv, arg: false)
-
       @quiet = delete_argv("--quiet", argv, arg: false)
+      @merge_coverage = delete_argv("--merge-coverage", argv, arg: false)
+
+      if @merge_coverage
+        raise "merge_coverage does not work on ruby prior to 2.3" if RUBY_VERSION < "2.3.0"
+        require 'coverage'
+        klass = (class << Coverage; self; end)
+        klass.prepend CoverageCapture
+      end
 
       disable_test_autorun
 
@@ -25,6 +65,8 @@ module ForkingTestRunner
       else
         puts "Running tests #{tests.map(&:first).join(" ")}"
       end
+
+      Coverage.capture_coverage! if @merge_coverage
 
       # run all the tests
       results = tests.map do |file, expected|

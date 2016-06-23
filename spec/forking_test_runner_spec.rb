@@ -110,6 +110,22 @@ describe ForkingTestRunner do
     result.should include "AR IS UNDEFINED"
   end
 
+  if RUBY_VERSION >= "2.3.0"
+    it "can keep coverage across forks" do
+      result = with_env "COVERAGE" => "1" do
+        runner("test/coverage.rb --merge-coverage")
+      end
+      result.should include "preloaded: [1, 1, 1, nil, nil, 1, 1, nil, nil]"
+    end
+  else
+    it "explodes when trying to use coverage" do
+      result = with_env "COVERAGE" => "1" do
+        runner("test/coverage.rb --merge-coverage", fail: true)
+      end
+      result.should include "merge_coverage does not work on ruby prior to 2.3"
+    end
+  end
+
   describe "quiet mode" do
     it "does not print test output" do
       result = runner("test --quiet")
