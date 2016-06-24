@@ -3,7 +3,9 @@ bundler_args: ""
 sudo: false
 rvm:
   - 2.0.0
-  - 2.1.5
+  - 2.1.8
+  - 2.2.4
+  - 2.3.1
 script: bundle exec rake spec
 branches:
   only: master
