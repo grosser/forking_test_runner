@@ -8,7 +8,7 @@ Gem::Specification.new name, ForkingTestRunner::VERSION do |s|
   s.homepage = "https://github.com/grosser/#{name}"
   s.files = `git ls-files lib/ bin/ MIT-LICENSE`.split("\n")
   s.add_runtime_dependency "parallel_tests", ">= 1.3.7"
-  s.add_runtime_dependency "activerecord", "< 6.0.0"
+  s.add_runtime_dependency "activerecord", "< 5.1.0"
   s.add_development_dependency "wwtd"
   s.add_development_dependency "bump"
   s.add_development_dependency "rake"
