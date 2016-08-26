@@ -14,4 +14,10 @@ gemfile:
  - gemfiles/40.gemfile
  - gemfiles/41.gemfile
  - gemfiles/42.gemfile
-
+ - gemfiles/50.gemfile
+matrix:
+  exclude:
+  - rvm: 2.0.0
+    gemfile: gemfiles/50.gemfile
+  - rvm: 2.1.8
+    gemfile: gemfiles/50.gemfile
