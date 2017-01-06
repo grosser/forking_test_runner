@@ -62,6 +62,11 @@ describe ForkingTestRunner do
     result.should_not include "Time:" # no runtime log -> no time info
   end
 
+  it "runs absolute files" do
+    result = runner(File.expand_path('../dummy/test/simple_test.rb', __FILE__))
+    result.should include "simple_test.rb"
+  end
+
   it "fails when a test fails" do
     with_env "FAIL_NOW" => "1" do
       result = runner("test", fail: true)

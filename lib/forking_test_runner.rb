@@ -338,7 +338,7 @@ module ForkingTestRunner
 
         if value
           minitest_class.autorun
-          require "./#{file}"
+          require(file.start_with?('/') ? file : "./#{file}")
         end
       end
     end
