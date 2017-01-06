@@ -1,5 +1,6 @@
 require "spec_helper"
 require "tempfile"
+require "active_record/version"
 
 describe ForkingTestRunner do
   let(:root) { File.expand_path("../../", __FILE__) }
@@ -115,7 +116,7 @@ describe ForkingTestRunner do
       result = with_env "COVERAGE" => "1" do
         runner("test/coverage.rb --merge-coverage")
       end
-      if ActiveRecord::Base::VERSION < "5.0.0"
+      if ActiveRecord::VERSION::STRING < "4.2.0"
         # older rails versions do some evil monkey patching that prevents us from recording coverage during fixture load
         result.should include "user: [1, 1, 0, nil, nil] preloaded: [1, 1, 1, nil, nil, 1, 1, nil, nil]"
       else
