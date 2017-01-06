@@ -115,7 +115,12 @@ describe ForkingTestRunner do
       result = with_env "COVERAGE" => "1" do
         runner("test/coverage.rb --merge-coverage")
       end
-      result.should include "preloaded: [1, 1, 1, nil, nil, 1, 1, nil, nil]"
+      if ActiveRecord::Base::VERSION < "5.0.0"
+        # older rails versions do some evil monkey patching that prevents us from recording coverage during fixture load
+        result.should include "user: [1, 1, 0, nil, nil] preloaded: [1, 1, 1, nil, nil, 1, 1, nil, nil]"
+      else
+        result.should include "user: [1, 1, 1, nil, nil] preloaded: [1, 1, 1, nil, nil, 1, 1, nil, nil]"
+      end
     end
   else
     it "explodes when trying to use coverage" do
