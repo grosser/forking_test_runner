@@ -6,4 +6,4 @@ if ENV["COVERAGE"]
 end
 
 require_relative "../setup_test_model"
-require_relative "../test/no_ar_helper"
+require_relative "no_ar_helper"

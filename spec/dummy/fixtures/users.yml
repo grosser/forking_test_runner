@@ -1,3 +1,4 @@
 <% $fixtures_loaded ||= 0; $fixtures_loaded += 1 %>
+<% User.coverage_test %>
 foo:
   name: Foo

@@ -66,6 +66,11 @@ module ForkingTestRunner
         puts "Running tests #{tests.map(&:first).join(" ")}"
       end
 
+      if ar?
+        preload_fixtures
+        ActiveRecord::Base.connection.disconnect!
+      end
+
       Coverage.capture_coverage! if @merge_coverage
 
       # run all the tests
@@ -198,8 +203,7 @@ module ForkingTestRunner
     # This forces Rails to load all fixtures, then prevents it from
     # "deleting and re-inserting all fixtures" when a new connection is used (forked).
     def preload_fixtures
-      return if @preloaded || @no_fixtures
-      @preloaded = true
+      return if @no_fixtures
 
       fixtures = (ActiveSupport::VERSION::MAJOR == 3 ? ActiveRecord::Fixtures : ActiveRecord::FixtureSet)
 
@@ -251,11 +255,6 @@ module ForkingTestRunner
     end
 
     def run_test(file)
-      if ar?
-        preload_fixtures
-        ActiveRecord::Base.connection.disconnect!
-      end
-
       output = change_program_name_to file do
         fork_with_captured_output(!@quiet) do
           SimpleCov.pid = Process.pid if defined?(SimpleCov) && SimpleCov.respond_to?(:pid=) # trick simplecov into reporting in this fork
@@ -339,7 +338,7 @@ module ForkingTestRunner
 
         if value
           minitest_class.autorun
-          require "./#{file}"
+          require(file.start_with?('/') ? file : "./#{file}")
         end
       end
     end
