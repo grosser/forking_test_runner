@@ -330,9 +330,16 @@ module ForkingTestRunner
         [:quiet, "--quiet", "Quiet"],
         [:no_fixtures, "--no-fixtures", "Do not load fixtures"],
         [:merge_coverage, "--merge-coverage", "Merge base code coverage into indvidual files coverage, great for SingleCov"],
-        [:record_runtime, "--record-runtime=MODE", "Record test runtime either simple (write to disk) or amend (combine via amend as a service) mode", String],
-        [:runtime_log, "--runtime-log=FILE", "File to store runtime log in", String],
-        [:group, "--group=NUM", "What group this is (use with --groups)", Integer],
+        [
+          :record_runtime,
+          "--record-runtime=MODE",
+          "\n      Record test runtime:\n" <<
+          "        simple = write to disk at --runtime-log)\n" <<
+          "        amend  = write from multiple remote workers via http://github.com/grosser/amend, needs TRAVIS_REPO_SLUG & TRAVIS_BUILD_NUMBER",
+          String
+        ],
+        [:runtime_log, "--runtime-log=FILE", "File to store runtime log in or runtime.log", String],
+        [:group, "--group=NUM", "What group this is (use with --groups / starts at 1)", Integer],
         [:groups, "--groups=NUM", "How many groups there are in total (use with --group)", Integer],
         [:version, "--version", "Show version"],
         [:help, "--help", "Show help"]
@@ -350,8 +357,7 @@ module ForkingTestRunner
 
       # # show help
       if options[:help]
-        parser = OptionParser.new do |opts|
-          opts.banner { "forking-test-runner folder [options]" }
+        parser = OptionParser.new("forking-test-runner folder [options]", 32, '') do |opts|
           arguments.each do |_, flag, desc, type|
             opts.on(flag, desc, type)
           end

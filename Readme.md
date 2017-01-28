@@ -74,20 +74,25 @@ Just add `--rspec`
 
 ### Options
 
+<!-- Updated by rake bump:patch -->
 ```
--h --help
---version
---runtime-log LOG
---helper test/helpers/test_helper.rb
---group GROUP # starts at 1
---groups GROUPS
---record-runtime
-    simple # write to local disc at location from --runtime-log or runtime.log
-    amend # write from multiple remote workers via http://github.com/grosser/amend, needs TRAVIS_REPO_SLUG + TRAVIS_BUILD_NUMBER
---merge-coverage # merge before fork and after for code coverage for normal coverage ... great for single_cov
---rspec
---no-fixtures
+forking-test-runner folder [options]
+    --rspec                      RSpec mode
+    --helper                     Helper file to load before tests start
+    --quiet                      Quiet
+    --no-fixtures                Do not load fixtures
+    --merge-coverage             Merge base code coverage into indvidual files coverage, great for SingleCov
+    --record-runtime=MODE        
+Record test runtime:
+simple = write to disk at --runtime-log)
+amend  = write from multiple remote workers via http://github.com/grosser/amend, needs TRAVIS_REPO_SLUG & TRAVIS_BUILD_NUMBER
+    --runtime-log=FILE           File to store runtime log in or runtime.log
+    --group=NUM                  What group this is (use with --groups / starts at 1)
+    --groups=NUM                 How many groups there are in total (use with --group)
+    --version                    Show version
+    --help                       Show help
 ```
+<!-- Updated by rake bump:patch -->
 
 ### Log aggregation
 
