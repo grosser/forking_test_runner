@@ -1,4 +1,5 @@
 require 'benchmark'
+require 'optparse'
 
 module ForkingTestRunner
   CLEAR = "------"
@@ -38,29 +39,18 @@ module ForkingTestRunner
 
   class << self
     def cli(argv)
-      @rspec = delete_argv("--rspec", argv, arg: false)
-      @no_fixtures = delete_argv("--no-fixtures", argv, arg: false)
-      @quiet = delete_argv("--quiet", argv, arg: false)
-      @merge_coverage = delete_argv("--merge-coverage", argv, arg: false)
-
-      if @merge_coverage
-        raise "merge_coverage does not work on ruby prior to 2.3" if RUBY_VERSION < "2.3.0"
-        require 'coverage'
-        klass = (class << Coverage; self; end)
-        klass.prepend CoverageCapture
-      end
+      @options, tests = parse_options(argv)
 
       disable_test_autorun
 
-      load_test_env(delete_argv("--helper", argv))
+      load_test_env(@options.fetch(:helper))
 
       # figure out what we need to run
-      record_runtime = delete_argv("--record-runtime", argv)
-      runtime_log = delete_argv("--runtime-log", argv)
-      group, group_count, tests = extract_group_args(argv)
+      runtime_log = @options.fetch(:runtime_log)
+      group, group_count = find_group_args
       tests = find_tests_for_group(group, group_count, tests, runtime_log)
 
-      if @quiet
+      if @options.fetch(:quiet)
         puts "Running #{tests.size} test files"
       else
         puts "Running tests #{tests.map(&:first).join(" ")}"
@@ -71,27 +61,27 @@ module ForkingTestRunner
         ActiveRecord::Base.connection.disconnect!
       end
 
-      Coverage.capture_coverage! if @merge_coverage
+      Coverage.capture_coverage! if @options.fetch(:merge_coverage)
 
       # run all the tests
       results = tests.map do |file, expected|
         puts "#{CLEAR} >>> #{file} "
         time, success, output = benchmark { run_test(file) }
 
-        puts output if !success && @quiet
+        puts output if !success && @options.fetch(:quiet)
 
-        if runtime_log && !@quiet
+        if runtime_log && !@options.fetch(:quiet)
           puts "Time: expected #{expected.round(2)}, actual #{time.round(2)}"
         end
 
-        if !success || !@quiet
+        if !success || !@options.fetch(:quiet)
           puts "#{CLEAR} <<< #{file} ---- #{success ? "OK" : "Failed"}"
         end
 
         [file, time, expected, output, success]
       end
 
-      unless @quiet
+      unless @options.fetch(:quiet)
         # pretty print the results
         puts "\nResults:"
         puts results.
@@ -110,10 +100,10 @@ module ForkingTestRunner
         puts "Time: #{diff.round(2)} diff to expected"
       end
 
-      if record_runtime
+      if mode = @options.fetch(:record_runtime)
         # store runtime log
         log = runtime_log || 'runtime.log'
-        record_test_runtime(record_runtime, results, log)
+        record_test_runtime(mode, results, log)
       end
 
       # exit with success or failure
@@ -131,7 +121,7 @@ module ForkingTestRunner
     end
 
     def summarize_results(results)
-      runner = if @rspec
+      runner = if @options.fetch(:rspec)
         require 'parallel_tests/rspec/runner'
         ParallelTests::RSpec::Runner
       else
@@ -174,36 +164,29 @@ module ForkingTestRunner
       end
     end
 
-    def extract_group_args(argv)
-      if argv.include?("--group")
+    def find_group_args
+      if @options.fetch(:group) && @options.fetch(:groups)
         # delete options we want while leaving others as they are (-v / --seed etc)
-        group, group_count = ['--group', '--groups'].map do |arg|
-          value = delete_argv(arg, argv) || raise("Did not find option #{arg}")
-          value.to_i
-        end
-        dir = argv.shift
-        raise "Unable to find directory #{dir.inspect}" unless File.exist?(dir.to_s)
-        tests = [dir]
+        group = @options.fetch(:group)
+        group_count = @options.fetch(:groups)
       else
         group = 1
         group_count = 1
-        size = argv.index { |arg| arg.start_with? "-" } || argv.size
-        tests = argv.slice!(0, size)
       end
 
-      [group, group_count, tests]
+      [group, group_count]
     end
 
     def load_test_env(helper=nil)
-      require 'rspec' if @rspec
-      helper = helper || (@rspec ? "spec/spec_helper" : "test/test_helper")
+      require 'rspec' if @options.fetch(:rspec)
+      helper = helper || (@options.fetch(:rspec) ? "spec/spec_helper" : "test/test_helper")
       require "./#{helper}"
     end
 
     # This forces Rails to load all fixtures, then prevents it from
     # "deleting and re-inserting all fixtures" when a new connection is used (forked).
     def preload_fixtures
-      return if @no_fixtures
+      return if @options.fetch(:no_fixtures)
 
       fixtures = (ActiveSupport::VERSION::MAJOR == 3 ? ActiveRecord::Fixtures : ActiveRecord::FixtureSet)
 
@@ -256,7 +239,7 @@ module ForkingTestRunner
 
     def run_test(file)
       output = change_program_name_to file do
-        fork_with_captured_output(!@quiet) do
+        fork_with_captured_output(!@options.fetch(:quiet)) do
           SimpleCov.pid = Process.pid if defined?(SimpleCov) && SimpleCov.respond_to?(:pid=) # trick simplecov into reporting in this fork
           if ar?
             key = (ActiveRecord::VERSION::STRING >= "4.1.0" ? :test : "test")
@@ -294,16 +277,6 @@ module ForkingTestRunner
       group.map { |test| [test, (tests[test] if group_by == :runtime)] }
     end
 
-    def delete_argv(name, argv, arg: true)
-      return unless index = argv.index(name)
-      argv.delete_at(index)
-      if arg
-        argv.delete_at(index) || raise("Missing argument for #{name}")
-      else
-        true
-      end
-    end
-
     def ar?
       defined?(ActiveRecord::Base)
     end
@@ -323,7 +296,7 @@ module ForkingTestRunner
     end
 
     def toggle_test_autorun(value, file=nil)
-      if @rspec
+      if @options.fetch(:rspec)
         if value
           exit(RSpec::Core::Runner.run([file] + ARGV))
         else
@@ -340,6 +313,78 @@ module ForkingTestRunner
           minitest_class.autorun
           require(file.start_with?('/') ? file : "./#{file}")
         end
+      end
+    end
+
+    # Option parsing is a bit wonky ... we remove the args we understand and leave the rest alone namely --seed and -v
+    # but also whatever else ... and keep our options clear / unambiguous to avoid overriding anything
+    # then also remove all non-flag arguments as these are the tests and leave only unknown options behind
+    # using .fetch everywhere to make sure nothing is misspelled
+    # GOOD: test --known --unknown
+    # OK: --know test --unknown
+    # BAD: --unknown test --known
+    def parse_options(argv)
+      arguments = [
+        [:rspec, "--rspec", "RSpec mode"],
+        [:helper, "--helper", "Helper file to load before tests start", String],
+        [:quiet, "--quiet", "Quiet"],
+        [:no_fixtures, "--no-fixtures", "Do not load fixtures"],
+        [:merge_coverage, "--merge-coverage", "Merge base code coverage into indvidual files coverage, great for SingleCov"],
+        [:record_runtime, "--record-runtime=MODE", "Record test runtime either simple (write to disk) or amend (combine via amend as a service) mode", String],
+        [:runtime_log, "--runtime-log=FILE", "File to store runtime log in", String],
+        [:group, "--group=NUM", "What group this is (use with --groups)", Integer],
+        [:groups, "--groups=NUM", "How many groups there are in total (use with --group)", Integer],
+        [:version, "--version", "Show version"],
+        [:help, "--help", "Show help"]
+      ]
+
+      options = arguments.each_with_object({}) do |(setting, flag, _, type), all|
+        all[setting] = delete_argv(flag.split('=', 2)[0], argv, type: type)
+      end
+
+      # show version
+      if options.fetch(:version)
+        puts VERSION
+        exit 0
+      end
+
+      # # show help
+      if options[:help]
+        parser = OptionParser.new do |opts|
+          opts.banner { "forking-test-runner folder [options]" }
+          arguments.each do |_, flag, desc, type|
+            opts.on(flag, desc, type)
+          end
+        end
+        puts parser
+        exit 0
+      end
+
+      # check if we can use merge_coverage
+      if options.fetch(:merge_coverage)
+        abort "merge_coverage does not work on ruby prior to 2.3" if RUBY_VERSION < "2.3.0"
+        require 'coverage'
+        klass = (class << Coverage; self; end)
+        klass.prepend CoverageCapture
+      end
+
+      # all remaining non-flag options until the next flag must be tests
+      next_flag = argv.index { |arg| arg.start_with?("-") } || argv.size
+      tests = argv.slice!(0, next_flag)
+      abort "No tests or folders found in arguments" if tests.empty?
+      tests.each { |t| abort "Unable to find #{t}" unless File.exist?(t) }
+
+      [options, tests]
+    end
+
+    def delete_argv(name, argv, type:)
+      return unless index = argv.index(name)
+      argv.delete_at(index)
+      if type
+        found = argv.delete_at(index) || raise("Missing argument for #{name}")
+        send(type.name, found) # case found
+      else
+        true
       end
     end
   end

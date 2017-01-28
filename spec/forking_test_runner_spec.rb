@@ -53,6 +53,26 @@ describe ForkingTestRunner do
     ForkingTestRunner::VERSION.should =~ /^[\.\da-z]+$/
   end
 
+  it "shows --version" do
+    runner("--version").should match(/\A\d+\.\d+\.\d+\n\z/)
+  end
+
+  it "passes -v to ruby to make verbose testing work" do
+    runner("test/another_test.rb -v").should include("AnotherTest#test_true")
+  end
+
+  it "shows --help" do
+    runner("--help").should include("forking-test-runner")
+  end
+
+  it "fails without tests" do
+    runner("--meh", fail: true).should == "No tests or folders found in arguments\n"
+  end
+
+  it "fails with missing tests" do
+    runner("meh", fail: true).should == "Unable to find meh\n"
+  end
+
   it "runs tests without pollution" do
     result = runner("test")
     result.should include "simple_test.rb"

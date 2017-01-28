@@ -75,6 +75,8 @@ Just add `--rspec`
 ### Options
 
 ```
+-h --help
+--version
 --runtime-log LOG
 --helper test/helpers/test_helper.rb
 --group GROUP # starts at 1
