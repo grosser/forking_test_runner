@@ -316,13 +316,14 @@ module ForkingTestRunner
       end
     end
 
-    # Option parsing is a bit wonky ... we remove the args we understand and leave the rest alone namely --seed and -v
-    # but also whatever else ... and keep our options clear / unambiguous to avoid overriding anything
-    # then also remove all non-flag arguments as these are the tests and leave only unknown options behind
-    # using .fetch everywhere to make sure nothing is misspelled
-    # GOOD: test --known --unknown
-    # OK: --know test --unknown
-    # BAD: --unknown test --known
+    # we remove the args we understand and leave the rest alone
+    # so minitest / rspec can read their own options (--seed / -v ...)
+    #  - keep our options clear / unambiguous to avoid overriding
+    #  - read all serial non-flag arguments as tests and leave only unknown options behind
+    #  - use .fetch everywhere to make sure nothing is misspelled
+    # GOOD: test --ours --theirs
+    # OK: --ours test --theirs
+    # BAD: --theirs test --ours
     def parse_options(argv)
       arguments = [
         [:rspec, "--rspec", "RSpec mode"],
@@ -383,7 +384,7 @@ module ForkingTestRunner
       [options, tests]
     end
 
-    def delete_argv(name, argv, type:)
+    def delete_argv(name, argv, type: nil)
       return unless index = argv.index(name)
       argv.delete_at(index)
       if type
