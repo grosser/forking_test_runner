@@ -1,8 +1,8 @@
 PATH
   remote: .
   specs:
-    forking_test_runner (0.9.0)
-      activerecord (< 5.1.0)
+    forking_test_runner (1.0.0)
+      activerecord (< 5.2.0)
       parallel_tests (>= 1.3.7)
 
 GEM
@@ -61,4 +61,4 @@ DEPENDENCIES
   wwtd
 
 BUNDLED WITH
-   1.13.6
+   1.14.6
