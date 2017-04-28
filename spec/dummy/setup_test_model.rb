@@ -3,13 +3,17 @@ require 'active_record'
 
 $LOAD_PATH << File.expand_path('../lib', __FILE__)
 
+ENV["RAILS_ENV"] = "test"
+
 # connect
-ActiveRecord::Base.configurations = {
+configurations = {
   "test" => {
     adapter: "sqlite3",
     database: File.expand_path("../db.sqlite", __FILE__)
   }
 }
+ActiveRecord::Base.configurations =
+  (ActiveRecord::VERSION::STRING >= "5.1.0" ? {"test" => configurations} : configurations)
 
 key = (ActiveRecord::VERSION::STRING >= "4.1.0" ? :test : "test")
 ActiveRecord::Base.establish_connection key
