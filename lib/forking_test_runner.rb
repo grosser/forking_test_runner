@@ -178,7 +178,7 @@ module ForkingTestRunner
     end
 
     def load_test_env(helper=nil)
-      require 'rspec' if @options.fetch(:rspec)
+      require 'rspec/core' if @options.fetch(:rspec)
       helper = helper || (@options.fetch(:rspec) ? "spec/spec_helper" : "test/test_helper")
       require "./#{helper}"
     end
@@ -301,7 +301,7 @@ module ForkingTestRunner
           exit(RSpec::Core::Runner.run([file] + ARGV))
         else
           require 'bundler/setup'
-          require 'rspec'
+          require 'rspec/core'
           RSpec::Core::Runner.disable_autorun! # disable autorun in case the user left it in spec_helper.rb
           $LOAD_PATH.unshift "./lib"
           $LOAD_PATH.unshift "./spec"
