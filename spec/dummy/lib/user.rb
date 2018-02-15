@@ -1,5 +1,5 @@
 class User < ActiveRecord::Base
   def self.coverage_test
-    111
+    rand if $flip_coverage_test == 1
   end
 end

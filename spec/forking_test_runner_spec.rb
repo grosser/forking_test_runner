@@ -138,7 +138,7 @@ describe ForkingTestRunner do
 
   if RUBY_VERSION >= "2.3.0"
     it "can keep coverage across forks" do
-      result = with_env "COVERAGE" => "1" do
+      result = with_env "COVERAGE" => "line" do
         runner("test/coverage.rb --merge-coverage")
       end
       if ActiveRecord::VERSION::STRING < "4.2.0"
@@ -146,6 +146,22 @@ describe ForkingTestRunner do
         result.should include "user: [1, 1, 0, nil, nil] preloaded: [1, 1, 1, nil, nil, 1, 1, nil, nil]"
       else
         result.should include "user: [1, 1, 1, nil, nil] preloaded: [1, 1, 1, nil, nil, 1, 1, nil, nil]"
+      end
+    end
+
+    if RUBY_VERSION >= "2.5.0"
+      it "can keep branch coverage across forks" do
+        result = with_env "COVERAGE" => "branches" do
+          runner("test/coverage.rb --merge-coverage")
+        end
+        result.should include "user: {:lines=>[1, 1, 1, nil, nil], :branches=>{[:if, 0, 3, 4, 3, 36]=>{[:then, 1, 3, 4, 3, 8]=>0, [:else, 2, 3, 4, 3, 36]=>1}}} preloaded: {:lines=>[1, 1, 1, nil, nil, 1, 1, nil, nil], :branches=>{}}"
+      end
+
+      it "can merge branch coverage" do
+        ForkingTestRunner::CoverageCapture.merge_coverage(
+          {"foo.rb" => {lines: [1,2,3], branches: {foo: {bar: 0, baz: 1}}}},
+          {"foo.rb" => {lines: [1,2,3], branches: {foo: {bar: 1, baz: 0}}}}
+        ).should == {"foo.rb" => {lines: [2,4,6], branches: {foo: {bar: 1, baz: 1}}}}
       end
     end
   else
