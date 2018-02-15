@@ -1,6 +1,10 @@
 if ENV["COVERAGE"]
   require 'coverage'
-  Coverage.start
+  if ENV["COVERAGE"] == "branches"
+    Coverage.start lines: true, branches: true
+  else
+    Coverage.start
+  end
   require_relative 'preloaded'
   PreloadedCoverage.generate_coverage_before_fork
 end
