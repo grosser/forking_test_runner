@@ -306,7 +306,7 @@ module ForkingTestRunner
     end
 
     def ar?
-      defined?(ActiveRecord::Base)
+      !@options.fetch(:no_ar) && defined?(ActiveRecord::Base)
     end
 
     def minitest_class
@@ -358,6 +358,7 @@ module ForkingTestRunner
         [:helper, "--helper", "Helper file to load before tests start", String],
         [:quiet, "--quiet", "Quiet"],
         [:no_fixtures, "--no-fixtures", "Do not load fixtures"],
+        [:no_ar, "--no-ar", "Disable ActiveRecord logic"],
         [:merge_coverage, "--merge-coverage", "Merge base code coverage into indvidual files coverage, great for SingleCov"],
         [
           :record_runtime,
