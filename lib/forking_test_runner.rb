@@ -1,5 +1,6 @@
 require 'benchmark'
 require 'optparse'
+require 'forking_test_runner/version'
 
 module ForkingTestRunner
   CLEAR = "------"
