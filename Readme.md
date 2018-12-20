@@ -81,6 +81,7 @@ forking-test-runner folder [options]
     --helper                     Helper file to load before tests start
     --quiet                      Quiet
     --no-fixtures                Do not load fixtures
+    --no-ar                      Disable ActiveRecord logic
     --merge-coverage             Merge base code coverage into indvidual files coverage, great for SingleCov
     --record-runtime=MODE        
       Record test runtime:
