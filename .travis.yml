@@ -1,20 +1,28 @@
 language: ruby
+
 bundler_args: ""
+
 sudo: false
+
 rvm:
   - 2.0.0
-  - 2.1.8
-  - 2.2.4
-  - 2.3.1
-  - 2.4.1
+  - 2.1.10
+  - 2.2.10
+  - 2.3.7
+  - 2.4.4
+  - 2.5.1
+
 script: bundle exec rake spec
+
 branches:
   only: master
+
 gemfile:
  - gemfiles/32.gemfile
  - gemfiles/42.gemfile
  - gemfiles/50.gemfile
  - gemfiles/51.gemfile
+
 matrix:
   exclude:
   - rvm: 2.0.0
