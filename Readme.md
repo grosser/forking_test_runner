@@ -83,7 +83,7 @@ forking-test-runner folder [options]
     --no-fixtures                Do not load fixtures
     --no-ar                      Disable ActiveRecord logic
     --merge-coverage             Merge base code coverage into indvidual files coverage, great for SingleCov
-    --record-runtime=MODE        
+    --record-runtime=MODE
       Record test runtime:
         simple = write to disk at --runtime-log)
         amend  = write from multiple remote workers via http://github.com/grosser/amend, needs TRAVIS_REPO_SLUG & TRAVIS_BUILD_NUMBER
@@ -94,6 +94,11 @@ forking-test-runner folder [options]
     --help                       Show help
 ```
 <!-- Updated by rake bump:patch -->
+
+### Supported CI Providers
+
+ * Travis CI (TRAVIS_REPO_SLUG, TRAVIS_BUILD_NUMBER)
+ * Buildkite (BUILDKITE_ORGANIZATION_SLUG, BUILDKITE_PIPELINE_SLUG, BUILDKITE_JOB_ID)
 
 ### Log aggregation
 
