@@ -184,7 +184,7 @@ module ForkingTestRunner
           id = ENV.fetch("BUILDKITE_JOB_ID")
         else
           raise "No env found for a CI provider"
-        done
+        end
 
         url = "https://amend.herokuapp.com/amend/#{slug}-#{id}"
 
