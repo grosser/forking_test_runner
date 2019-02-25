@@ -176,8 +176,16 @@ module ForkingTestRunner
       when 'simple'
         File.write(log, data)
       when 'amend'
-        slug = ENV.fetch("TRAVIS_REPO_SLUG").sub("/", "-")
-        id = ENV.fetch("TRAVIS_BUILD_NUMBER")
+        if ENV.has_key? "TRAVIS_REPO_SLUG" &&  ENV.has_key? "TRAVIS_BUILD_NUMBER"
+          slug = ENV.fetch("TRAVIS_REPO_SLUG").sub("/", "-")
+          id = ENV.fetch("TRAVIS_BUILD_NUMBER"
+        elsif ENV.has_key? "BUILDKITE_PIPELINE_SLUG" && ENV.has_key? "BUILDKITE_JOB_ID"
+          slug = ENV.fetch("BUILDKITE_ORG_SLUG") + "-" + ENV.fetch("BUILDKITE_PIPELINE_SLUG")
+          id = ENV.fetch("BUILDKITE_JOB_ID")
+        else
+          raise "No env found for a CI provider"
+        end
+
         url = "https://amend.herokuapp.com/amend/#{slug}-#{id}"
 
         require 'tempfile'
