@@ -21,11 +21,11 @@ describe ForkingTestRunner do
 
   def with_env(hash)
     env = Bundler::ORIGINAL_ENV
-    old = {}
-    hash.each { |k,v| old[k], env[k] = env[k], v }
+    old = env.dup
+    hash.each { |k,v| env[k.to_s] = v }
     yield
   ensure
-    old.each { |k,v| env[k] = v }
+    env.replace(old)
   end
 
   def assert_correct_runtime(result)
@@ -105,13 +105,33 @@ describe ForkingTestRunner do
     result.should include "PROGRAM IS test/show_program_name.rb YEAH"
   end
 
-  # this test needs internet access
-  it "records runtime" do
-    with_env "TRAVIS_REPO_SLUG" => "test-slug", "TRAVIS_BUILD_NUMBER" => "build#{rand(999999)}" do
-      result = runner("test --record-runtime amend")
-      url = result[/curl \S+/] || raise("no command found")
-      result = sh "curl --silent #{url}"
-      assert_correct_runtime(result)
+  describe "amend" do
+    # this test needs internet access
+    it "records runtime for travis" do
+      with_env TRAVIS_REPO_SLUG: "test-slug", TRAVIS_BUILD_NUMBER: "build#{rand(999999)}" do
+        result = runner("test --record-runtime amend")
+        url = result[/curl \S+/] || raise("no command found")
+        result = sh "curl --silent #{url}"
+        assert_correct_runtime(result)
+      end
+    end
+
+    # this test needs internet access
+    it "records runtime for buildkite" do
+      with_env BUILDKITE_JOB_ID: "#{rand(999999)}", BUILDKITE_ORG_SLUG: "foo", BUILDKITE_PIPELINE_SLUG: "bar" do
+        result = runner("test --record-runtime amend")
+        url = result[/curl \S+/] || raise("no command found")
+        result = sh "curl --silent #{url}"
+        assert_correct_runtime(result)
+      end
+    end
+
+    # this test needs internet access
+    it "fails when unable to determine unique slug" do
+      with_env TRAVIS_REPO_SLUG: nil, TRAVIS_BUILD_NUMBER: nil do
+        result = runner("test --record-runtime amend", fail: true)
+        result.should include "KeyError: key not found"
+      end
     end
   end
 
