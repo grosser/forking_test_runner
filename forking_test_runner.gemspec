@@ -14,7 +14,7 @@ Gem::Specification.new name, ForkingTestRunner::VERSION do |s|
   s.add_development_dependency "rspec"
   s.add_development_dependency "sqlite3"
   s.add_development_dependency "minitest"
-  s.required_ruby_version = '>= 2.0.0'
+  s.required_ruby_version = ">= 2.3.0"
 
   s.executables = ["forking-test-runner"]
   s.license = "MIT"
