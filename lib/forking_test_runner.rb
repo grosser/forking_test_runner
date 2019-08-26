@@ -221,9 +221,8 @@ module ForkingTestRunner
     def preload_fixtures
       return if @options.fetch(:no_fixtures)
 
-      fixtures = (ActiveSupport::VERSION::MAJOR == 3 ? ActiveRecord::Fixtures : ActiveRecord::FixtureSet)
-
       # reuse our pre-loaded fixtures even if we have a different connection
+      fixtures = ActiveRecord::FixtureSet
       fixtures_eigenclass = class << fixtures; self; end
       fixtures_eigenclass.send(:define_method, :cache_for_connection) do |_connection|
         fixtures.class_variable_get(:@@all_cached_fixtures)[:unique]
@@ -317,14 +316,8 @@ module ForkingTestRunner
     def minitest_class
       @minitest_class ||= begin
         require 'bundler/setup'
-        gem 'minitest'
-        if Gem.loaded_specs["minitest"].version.segments.first == 4 # 4.x
-          require 'minitest/unit'
-          MiniTest::Unit
-        else
-          require 'minitest'
-          Minitest
-        end
+        require 'minitest'
+        Minitest
       end
     end
 
