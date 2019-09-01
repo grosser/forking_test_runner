@@ -64,6 +64,13 @@ forking-test-runner test/ --parallel 4
 forking-test-runner test/ --group 1 --groups 20
 ```
 
+### Executing multiple groups
+
+```
+forking-test-runner test/ --group 1,2,3,4 --groups 20
+forking-test-runner test/ --group 1,2,3,4 --groups 20 --parallel 4
+```
+
 ### Make test groups take the same time
 
 Record test runtime (on your CI, see other modes below)

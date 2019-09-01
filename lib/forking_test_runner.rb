@@ -15,12 +15,13 @@ module ForkingTestRunner
 
       # figure out what we need to run
       runtime_log = @options.fetch(:runtime_log)
+      groups, group_count = find_group_args
+      parallel = @options.fetch(:parallel)
       test_groups =
-        if parallel = @options.fetch(:parallel)
+        if parallel && !@options.fetch(:group)
           Array.new(parallel) { |i| find_tests_for_group(i + 1, parallel, tests, runtime_log) }
         else
-          group, group_count = find_group_args
-          [find_tests_for_group(group, group_count, tests, runtime_log)]
+          groups.map { |group| find_tests_for_group(group, group_count, tests, runtime_log) }
         end
 
       # say what we are running
@@ -175,9 +176,9 @@ module ForkingTestRunner
       groups = @options.fetch(:groups)
       if group && groups
         # delete options we want while leaving others as they are (-v / --seed etc)
-        [group, groups]
+        [group.split(",").map { |g| Integer(g) }, groups]
       else
-        [1, 1]
+        [[1], 1]
       end
     end
 

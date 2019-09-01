@@ -18,7 +18,7 @@ module ForkingTestRunner
       ],
       [:runtime_log, "--runtime-log=FILE", "File to store runtime log in or runtime.log", String],
       [:parallel, "--parallel=NUM", "Number of parallel groups to run at once", Integer],
-      [:group, "--group=NUM", "What group this is (use with --groups / starts at 1)", Integer],
+      [:group, "--group=NUM[,NUM]", "What group this is (use with --groups / starts at 1)", String],
       [:groups, "--groups=NUM", "How many groups there are in total (use with --group)", Integer],
       [:version, "--version", "Show version"],
       [:help, "--help", "Show help"]

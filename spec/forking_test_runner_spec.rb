@@ -155,6 +155,11 @@ describe ForkingTestRunner do
     result.should include "diff to expected" # global summary
   end
 
+  it "can run multiple groups" do
+    result = runner("test --group 1,2 --groups 4")
+    result.scan("<<<").size.should == 2
+  end
+
   it "can run without activerecord" do
     result = runner("test/no_ar_test.rb --helper test/no_ar_helper.rb")
     result.should =~ /1 tests, 1 assertions|1 runs, 1 assertions/
@@ -302,7 +307,7 @@ describe ForkingTestRunner do
     end
 
     it "can run with AR" do
-      runner("test/simple_test.rb --parallel 2")
+      runner("test/ --parallel 2")
     end
 
     it "crashes nicely when test helper fails" do
