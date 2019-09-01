@@ -1,5 +1,5 @@
-Run every test in a fork to avoid pollution and get clean output per test.
-Forks are fast because they preload the test_helper + all fixtures.
+Run every test in a fork to avoid global pollution and get clean results printed per test.
+Forks are fast because they preload the test_helper + all activerecord fixtures.
 
 Install
 =======
@@ -8,8 +8,13 @@ Install
 gem install forking_test_runner
 ```
 
+Usage
+=====
+
+### Run folders
+
 ```
-forking-test-runner test
+forking-test-runner test/
 Running tests test/another_test.rb test/pollution_test.rb test/simple_test.rb
 ------ >>> test/another_test.rb
 Run options: --seed 19151
@@ -33,16 +38,15 @@ test/simple_test.rb: OK
 9 assertions, 0 errors, 0 failures, 0 skips, 8 tests
 ```
 
-Usage
-=====
-
-Run it with individual files
+### Run single files
 
 ```
 forking-test-runner test/models/user_test.rb test/models/order_test.rb
 ```
 
-### Simple parallel execution on CI
+### Parallel execution on CI
+
+20 Parallel workers that each test 1 chunk of tests
 
 ```
 forking-test-runner test --group 1 --groups 20
@@ -56,13 +60,13 @@ Record test runtime (on your CI, see other modes below)
 forking-test-runner test --group 1 --groups 20 --record-runtime amend
 ```
 
-Then download the runtime + commit it to your repo + run with runtime
+Then download the runtime info + commit it to your repo + run with runtime
 
 ```
 forking-test-runner test --group 1 --groups 20 --runtime-log test/files/runtime.log
 ```
 
-### Only provide output from failed tests
+### Only show output of failed tests
 
 ```
 forking-test-runner test --quiet
@@ -70,7 +74,7 @@ forking-test-runner test --quiet
 
 ### RSpec
 
-Just add `--rspec`
+Run with `--rspec`
 
 ### Options
 
@@ -112,7 +116,7 @@ Authors
  - [Ben Osheroff](https://github.com/osheroff)
  - [Barry Gordon](https://github.com/brrygrdn)
 
-[Michael Grosser](http://grosser.it)<br/>
+[Michael Grosser](https://grosser.it)<br/>
 michael@grosser.it<br/>
 License: MIT<br/>
-[![Build Status](https://travis-ci.org/grosser/forking_test_runner.png)](https://travis-ci.org/grosser/forking_test_runner)
+[![Build Status](https://travis-ci.org/grosser/forking_test_runner.svg)](https://travis-ci.org/grosser/forking_test_runner)
