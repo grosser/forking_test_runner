@@ -46,12 +46,22 @@ test/simple_test.rb: OK
 forking-test-runner test/models/user_test.rb test/models/order_test.rb
 ```
 
+### Parallel
+
+Execute in `4` parallel processes, with `TEST_ENV_NUMBER` set to `'' / '2' / '3' / '4'`,
+see [parallel_tests](https://github.com/grosser/parallel_tests) for setup helpers and details.
+Stdout is synchronized and test results (start/output/finish) are printed when a test completes.
+
+```
+forking-test-runner test/ --parallel 4
+```
+
 ### Parallel execution on CI
 
 20 Parallel workers that each test 1 chunk of tests
 
 ```
-forking-test-runner test --group 1 --groups 20
+forking-test-runner test/ --group 1 --groups 20
 ```
 
 ### Make test groups take the same time
@@ -59,19 +69,19 @@ forking-test-runner test --group 1 --groups 20
 Record test runtime (on your CI, see other modes below)
 
 ```
-forking-test-runner test --group 1 --groups 20 --record-runtime amend
+forking-test-runner test/ --group 1 --groups 20 --record-runtime amend
 ```
 
 Then download the runtime info + commit it to your repo + run with runtime
 
 ```
-forking-test-runner test --group 1 --groups 20 --runtime-log test/files/runtime.log
+forking-test-runner test/ --group 1 --groups 20 --runtime-log test/files/runtime.log
 ```
 
 ### Only show output of failed tests
 
 ```
-forking-test-runner test --quiet
+forking-test-runner test/ --quiet
 ```
 
 ### RSpec

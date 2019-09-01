@@ -17,6 +17,7 @@ module ForkingTestRunner
         String
       ],
       [:runtime_log, "--runtime-log=FILE", "File to store runtime log in or runtime.log", String],
+      [:parallel, "--parallel=NUM", "Number of parallel groups to run at once", Integer],
       [:group, "--group=NUM", "What group this is (use with --groups / starts at 1)", Integer],
       [:groups, "--groups=NUM", "How many groups there are in total (use with --group)", Integer],
       [:version, "--version", "Show version"],
@@ -44,6 +45,10 @@ module ForkingTestRunner
         # check if we can use merge_coverage
         if options.fetch(:merge_coverage)
           abort "merge_coverage does not work on ruby prior to 2.3" if RUBY_VERSION < "2.3.0"
+        end
+
+        if !!options.fetch(:group) ^ !!options.fetch(:groups)
+          abort "use --group and --groups together"
         end
 
         # all remaining non-flag options until the next flag must be tests

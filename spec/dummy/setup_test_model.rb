@@ -9,7 +9,7 @@ ENV["RAILS_ENV"] = "test"
 configurations = {
   "test" => {
     adapter: "sqlite3",
-    database: File.expand_path("../db.sqlite", __FILE__)
+    database: File.expand_path("../db#{ENV["FORCE_TEST_ENV_NUMBER"] || ENV["TEST_ENV_NUMBER"]}.sqlite", __FILE__)
   }
 }
 ActiveRecord::Base.configurations =

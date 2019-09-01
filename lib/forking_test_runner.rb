@@ -3,6 +3,8 @@ require 'optparse'
 require 'forking_test_runner/version'
 require 'forking_test_runner/coverage_capture'
 require 'forking_test_runner/cli'
+require 'parallel'
+require 'tempfile'
 
 module ForkingTestRunner
   CLEAR = "------"
@@ -13,51 +15,59 @@ module ForkingTestRunner
 
       # figure out what we need to run
       runtime_log = @options.fetch(:runtime_log)
-      group, group_count = find_group_args
-      tests = find_tests_for_group(group, group_count, tests, runtime_log)
+      test_groups =
+        if parallel = @options.fetch(:parallel)
+          Array.new(parallel) { |i| find_tests_for_group(i + 1, parallel, tests, runtime_log) }
+        else
+          group, group_count = find_group_args
+          [find_tests_for_group(group, group_count, tests, runtime_log)]
+        end
 
+      # say what we are running
+      all_tests = test_groups.flatten(1)
       if @options.fetch(:quiet)
-        puts "Running #{tests.size} test files"
+        puts "Running #{all_tests.size} test files"
       else
-        puts "Running tests #{tests.map(&:first).join(" ")}"
+        puts "Running tests #{all_tests.map(&:first).join(" ")}"
       end
 
-      load_test_env
-
       # run all the tests
-      results = tests.map do |file, expected|
-        puts "#{CLEAR} >>> #{file} "
-        time, success, output = benchmark { run_test(file) }
+      results = with_lock do |lock|
+        Parallel.map_with_index(test_groups, in_processes: parallel || 0) do |tests, env_index|
+          if parallel
+            ENV["TEST_ENV_NUMBER"] = (env_index == 0 ? '' : (env_index + 1).to_s) # NOTE: does not support first_is_1 option
+          end
 
-        puts output if !success && @options.fetch(:quiet)
+          reraise_clean_ar_error { load_test_env }
 
-        if runtime_log && !@options.fetch(:quiet)
-          puts "Time: expected #{expected.round(2)}, actual #{time.round(2)}"
-        end
-
-        if !success || !@options.fetch(:quiet)
-          puts "#{CLEAR} <<< #{file} ---- #{success ? "OK" : "Failed"}"
-        end
-
-        [file, time, expected, output, success]
+          tests.map do |file, expected|
+            print_started file unless parallel
+            result = [file, expected, *benchmark { run_test(file) }]
+            sync_stdout lock do
+              print_started file if parallel
+              print_finished *result
+            end
+            result
+          end
+        end.flatten(1)
       end
 
       unless @options.fetch(:quiet)
         # pretty print the results
         puts "\nResults:"
         puts results.
-          sort_by { |_,_,_,_,r| r ? 0 : 1 }. # failures should be last so they are easy to find
-          map { |f,_,_,_,r| "#{f}: #{r ? "OK" : "Fail"}"}
+          sort_by { |_,_,_,r,_| r ? 0 : 1 }. # failures should be last so they are easy to find
+          map { |f,_,_,r,_| "#{f}: #{r ? "OK" : "Fail"}"}
         puts
       end
 
-      success = results.map(&:last).all?
+      success = results.map { |r| r[3] }.all?
 
-      puts colorize(success, summarize_results(results.map { |r| r[3] }))
+      puts colorize(success, summarize_results(results.map { |r| r[4] }))
 
       if runtime_log
         # show how long they ran vs expected
-        diff = results.map { |_,time,expected| time - expected }.inject(:+).to_f
+        diff = results.map { |_, expected, time| time - expected }.inject(:+).to_f
         puts "Time: #{diff.round(2)} diff to expected"
       end
 
@@ -72,6 +82,38 @@ module ForkingTestRunner
     end
 
     private
+
+    def with_lock(&block)
+      return yield unless @options.fetch(:parallel)
+      Tempfile.open"forking-test-runner-lock", &block
+    end
+
+    def sync_stdout(lock)
+      return yield unless @options.fetch(:parallel)
+      begin
+        lock.flock(File::LOCK_EX)
+        yield
+      ensure
+        lock.flock(File::LOCK_UN)
+      end
+    end
+
+    def print_started(file)
+      puts "#{CLEAR} >>> #{file}"
+    end
+
+    def print_finished(file, expected, time, success, stdout)
+      # print stdout if it was not shown before, but needs to be shown
+      puts stdout if (!success && @options.fetch(:quiet)) || (@options.fetch(:parallel) && !@options.fetch(:quiet))
+
+      if @options.fetch(:runtime_log) && !@options.fetch(:quiet)
+        puts "Time: expected #{expected.round(2)}, actual #{time.round(2)}"
+      end
+
+      if !success || !@options.fetch(:quiet)
+        puts "#{CLEAR} <<< #{file} ---- #{success ? "OK" : "Failed"}"
+      end
+    end
 
     def colorize(green, string)
       if $stdout.tty?
@@ -95,15 +137,13 @@ module ForkingTestRunner
 
     def benchmark
       result = false
-      time = Benchmark.realtime do
-        result = yield
-      end
-      return [time, result].flatten
+      time = Benchmark.realtime { result = yield }
+      [time, *result]
     end
 
     # log runtime via dumping or curling it into the runtime log location
     def record_test_runtime(mode, results, log)
-      data = results.map { |test, time| "#{test}:#{time.round(2)}" }.join("\n") << "\n"
+      data = results.map { |test, _, time| "#{test}:#{time.round(2)}" }.join("\n") << "\n"
 
       case mode
       when 'simple'
@@ -131,16 +171,14 @@ module ForkingTestRunner
     end
 
     def find_group_args
-      if @options.fetch(:group) && @options.fetch(:groups)
+      group = @options.fetch(:group)
+      groups = @options.fetch(:groups)
+      if group && groups
         # delete options we want while leaving others as they are (-v / --seed etc)
-        group = @options.fetch(:group)
-        group_count = @options.fetch(:groups)
+        [group, groups]
       else
-        group = 1
-        group_count = 1
+        [1, 1]
       end
-
-      [group, group_count]
     end
 
     def load_test_env
@@ -154,6 +192,20 @@ module ForkingTestRunner
       end
 
       CoverageCapture.capture! if @options.fetch(:merge_coverage)
+    end
+
+    def reraise_clean_ar_error
+      return yield unless @options.fetch(:parallel)
+
+      e = begin
+        yield
+        nil
+      rescue
+        $!
+      end
+
+      # needs to be done outside of the rescue block to avoid inheriting the cause
+      raise RuntimeError, "Re-raised error from test helper: #{e.message}", e.backtrace if e
     end
 
     def load_test_helper
@@ -193,7 +245,7 @@ module ForkingTestRunner
       toggle_test_autorun true, file
     end
 
-    def fork_with_captured_output(tee_to_stdout)
+    def fork_with_captured_stdout
       rpipe, wpipe = IO.pipe
 
       child = fork do
@@ -209,7 +261,7 @@ module ForkingTestRunner
 
       while ch = rpipe.read(1)
         buffer << ch
-        $stdout.write(ch) if tee_to_stdout
+        $stdout.write(ch) if !@options.fetch(:quiet) && !@options.fetch(:parallel) # tee
       end
 
       Process.wait(child)
@@ -217,8 +269,8 @@ module ForkingTestRunner
     end
 
     def run_test(file)
-      output = change_program_name_to file do
-        fork_with_captured_output(!@options.fetch(:quiet)) do
+      stdout = change_program_name_to file do
+        fork_with_captured_stdout do
           SimpleCov.pid = Process.pid if defined?(SimpleCov) && SimpleCov.respond_to?(:pid=) # trick simplecov into reporting in this fork
           if active_record?
             key = (ActiveRecord::VERSION::STRING >= "4.1.0" ? :test : "test")
@@ -228,14 +280,17 @@ module ForkingTestRunner
         end
       end
 
-      [$?.success?, output]
+      [$?.success?, stdout]
     end
 
     def change_program_name_to(name)
-      old, $0 = $0, name
-      yield
-    ensure
-      $0 = old
+      return yield if @options.fetch(:parallel)
+      begin
+        old, $0 = $0, name
+        yield
+      ensure
+        $0 = old
+      end
     end
 
     def find_tests_for_group(group, group_count, tests, runtime_log)
