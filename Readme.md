@@ -1,12 +1,14 @@
 Run every test in a fork to avoid global pollution and get clean results printed per test.
 Forks are fast because they preload the test_helper + all activerecord fixtures.
 
+
 Install
 =======
 
 ```Bash
 gem install forking_test_runner
 ```
+
 
 Usage
 =====
@@ -108,6 +110,15 @@ forking-test-runner folder [options]
 
 To analyze all builds try this [streaming travis log analyzer](https://gist.github.com/grosser/df68f5461d45601f37f0)
 it will show all failures, the failed files and failed jobs.
+
+
+Development
+===========
+
+ - `bundle exec rake` run tests
+ - `bundle exec wwtd:local` run tests on all supported gemfiles
+ - `bundle exec wwtd` run tests on all supported rubies and gemfiles
+
 
 Authors
 =======

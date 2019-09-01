@@ -20,9 +20,10 @@ class << Bump::Bump
   end)
 end
 
+desc "Run tests"
+task default: :spec
 
-task default: "wwtd:local"
-
+desc "Run tests"
 task :spec do
   sh "rspec spec/forking_test_runner_spec.rb"
 end
