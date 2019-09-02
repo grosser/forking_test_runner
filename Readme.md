@@ -111,7 +111,8 @@ forking-test-runner folder [options]
         simple = write to disk at --runtime-log)
         amend  = write from multiple remote workers via http://github.com/grosser/amend, needs TRAVIS_REPO_SLUG & TRAVIS_BUILD_NUMBER
     --runtime-log=FILE           File to store runtime log in or runtime.log
-    --group=NUM                  What group this is (use with --groups / starts at 1)
+    --parallel=NUM               Number of parallel groups to run at once
+    --group=NUM[,NUM]            What group this is (use with --groups / starts at 1)
     --groups=NUM                 How many groups there are in total (use with --group)
     --version                    Show version
     --help                       Show help
