@@ -10,7 +10,7 @@ class SimpleTest < ActiveSupport::TestCase
   end
 
   test "pollution" do
-    assert_equal nil, $polluted
+    assert_nil $polluted
   end
 
   test "loading fixtures once" do

@@ -65,6 +65,11 @@ describe ForkingTestRunner do
     runner("--help").should include("forking-test-runner")
   end
 
+  it "explains that using using --group without --groups does not work" do
+    runner("--group 1", fail: true).should include("use --group and --groups together")
+    runner("--groups 1", fail: true).should include("use --group and --groups together")
+  end
+
   it "fails without tests" do
     runner("--meh", fail: true).should == "No tests or folders found in arguments\n"
   end
@@ -150,6 +155,11 @@ describe ForkingTestRunner do
     result.should include "diff to expected" # global summary
   end
 
+  it "can run multiple groups" do
+    result = runner("test --group 1,2 --groups 4")
+    result.scan("<<<").size.should == 2
+  end
+
   it "can run without activerecord" do
     result = runner("test/no_ar_test.rb --helper test/no_ar_helper.rb")
     result.should =~ /1 tests, 1 assertions|1 runs, 1 assertions/
@@ -207,6 +217,104 @@ describe ForkingTestRunner do
         result.should include ">>>"
         result.should include "Finished"
         result.should include "<<<"
+      end
+    end
+  end
+
+  describe "parallel" do
+    it "is fast and does not overlap output" do
+      Benchmark.realtime do
+        result = runner("test/slow_1.rb test/slow_2.rb --parallel 2 --helper test/no_ar_helper.rb")
+        result.gsub!(/slow_\d/, "slow_d") || raise
+        result.gsub!(/--seed \d+/, "--seed d") || raise
+        result.gsub!(/0.\d+/, "0.0") || raise
+        result.should == <<~TEXT
+          Running tests test/slow_d.rb test/slow_d.rb
+          ------ >>> test/slow_d.rb
+          Run options: --seed d
+          
+          # Running:
+          
+          
+          
+          Finished in 0.0s, 0.0 runs/s, 0.0 assertions/s.
+          
+          0 runs, 0 assertions, 0 failures, 0 errors, 0 skips
+          ------ <<< test/slow_d.rb ---- OK
+          ------ >>> test/slow_d.rb
+          Run options: --seed d
+          
+          # Running:
+          
+          
+          
+          Finished in 0.0s, 0.0 runs/s, 0.0 assertions/s.
+          
+          0 runs, 0 assertions, 0 failures, 0 errors, 0 skips
+          ------ <<< test/slow_d.rb ---- OK
+          
+          Results:
+          test/slow_d.rb: OK
+          test/slow_d.rb: OK
+          
+          0 assertions, 0 errors, 0 failures, 0 runs, 0 skips
+        TEXT
+      end.should < 2
+    end
+
+    it "prints warnings immediately" do
+      result = runner("test/warn_1.rb test/warn_2.rb --parallel 2 --helper test/no_ar_helper.rb")
+      result.gsub!(/warn_\d/, "warn_d") || raise
+      result.should include <<~TEXT
+        Running tests test/warn_d.rb test/warn_d.rb
+        WARNING
+        WARNING
+        ------ >>> test/warn_d.rb
+      TEXT
+    end
+
+    it "can work quietly" do
+      result = runner("test/warn_1.rb test/warn_2.rb --parallel 2 --helper test/no_ar_helper.rb --quiet")
+      result.gsub!(/warn_\d/, "warn_d") || raise
+      result.should == <<~TEXT
+        Running 2 test files
+        WARNING
+        WARNING
+        ------ >>> test/warn_d.rb
+        ------ >>> test/warn_d.rb
+        0 assertions, 0 errors, 0 failures, 0 runs, 0 skips
+      TEXT
+    end
+
+    it "prints failures when quiet" do
+      result = runner("test/warn_1.rb test/fail.rb --parallel 2 --helper test/no_ar_helper.rb --quiet", fail: true)
+      result.should =~ /test\/fail.rb.*\nF\n.*Failure.*test\/fail.rb/m
+    end
+
+    it "can run with less than parallel files" do
+      result = runner("test/no_ar_test.rb --parallel 10 --helper test/no_ar_helper.rb --quiet")
+      result.should == <<~TEXT
+        Running 1 test files
+        ------ >>> test/no_ar_test.rb
+        1 assertion, 0 errors, 0 failures, 1 run, 0 skips
+      TEXT
+    end
+
+    it "sets TEST_ENV_NUMBER during helper and run" do
+      result = runner("test/test_env_1.rb test/test_env_2.rb --parallel 2 --helper test/no_ar_helper.rb")
+      result.should include "TEST ENV 2 <-> 2"
+      result.should include "TEST ENV  <-> "
+    end
+
+    it "can run with AR" do
+      runner("test/ --parallel 2")
+    end
+
+    it "crashes nicely when test helper fails" do
+      with_env FORCE_TEST_ENV_NUMBER: '' do
+        result = runner("test/simple_test.rb --parallel 2", fail: true)
+        result.should include "Re-raised error from test helper: SQLite3::BusyException: database is locked"
+        result.should include "/sqlite3/" # correct backtrace
       end
     end
   end

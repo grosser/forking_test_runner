@@ -6,6 +6,10 @@ module ForkingTestRunner
       CoverageCapture.merge_coverage(super, captured)
     end
 
+    # deprecated, single_cov checks for this, so leave it here
+    def capture_coverage!
+    end
+
     class << self
       attr_accessor :coverage
 
