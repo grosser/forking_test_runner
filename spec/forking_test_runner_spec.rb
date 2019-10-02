@@ -273,6 +273,11 @@ describe ForkingTestRunner do
       TEXT
     end
 
+    it "fails when processor count makes no sense for given group count" do
+      result = runner("test/warn_1.rb test/warn_2.rb --groups 6 --group 1,2 --parallel 3 --helper test/no_ar_helper.rb", fail: true)
+      result.should include "ArgumentError: Use the same amount of processors as groups"
+    end
+
     it "can work quietly" do
       result = runner("test/warn_1.rb test/warn_2.rb --parallel 2 --helper test/no_ar_helper.rb --quiet")
       result.gsub!(/warn_\d/, "warn_d") || raise
