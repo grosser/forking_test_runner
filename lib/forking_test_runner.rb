@@ -21,6 +21,7 @@ module ForkingTestRunner
         if parallel && !@options.fetch(:group)
           Array.new(parallel) { |i| find_tests_for_group(i + 1, parallel, tests, runtime_log) }
         else
+          raise ArgumentError, "Use the same amount of processors as groups" if parallel && parallel != group_count
           groups.map { |group| find_tests_for_group(group, group_count, tests, runtime_log) }
         end
 
