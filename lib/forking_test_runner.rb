@@ -252,8 +252,7 @@ module ForkingTestRunner
 
       child = fork do
         rpipe.close
-        $stdout.reopen(wpipe)
-
+        preserve_tty { $stdout.reopen(wpipe) }
         yield
       end
 
@@ -268,6 +267,13 @@ module ForkingTestRunner
 
       Process.wait(child)
       buffer
+    end
+
+    # not tested via CI
+    def preserve_tty
+      was_tty = $stdout.tty?
+      yield
+      def $stdout.tty?; true; end if was_tty
     end
 
     def run_test(file)
