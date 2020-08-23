@@ -95,6 +95,8 @@ describe ForkingTestRunner do
   it "fails when a test fails" do
     with_env "FAIL_NOW" => "1" do
       result = runner("test", fail: true)
+      result.should_not include "/dummy/" # no absolute path
+      result.should include "[test/pollution_test.rb:9]" # uses relative path
       result.should include "simple_test.rb ---- OK"
       result.should include "pollution_test.rb ---- Fail"
     end
