@@ -25,5 +25,7 @@ task default: :spec
 
 desc "Run tests"
 task :spec do
-  sh "rspec spec/forking_test_runner_spec.rb"
+  Bundler.with_unbundled_env do
+    sh "bundle exec rspec spec/forking_test_runner_spec.rb"
+  end
 end

@@ -11,7 +11,7 @@ describe ForkingTestRunner do
 
   def sh(command, options={})
     gemfile = ENV["BUNDLE_GEMFILE"]
-    result = Bundler.with_clean_env do
+    result = Bundler.with_unbundled_env do
       ENV["BUNDLE_GEMFILE"] = gemfile
       `#{command} #{"2>&1" unless options[:keep_output]}`
     end
