@@ -1,7 +1,7 @@
 PATH
   remote: ..
   specs:
-    forking_test_runner (1.4.0)
+    forking_test_runner (1.7.0)
       parallel_tests (>= 1.3.7)
 
 GEM
@@ -24,8 +24,8 @@ GEM
     i18n (1.6.0)
       concurrent-ruby (~> 1.0)
     minitest (5.11.3)
-    parallel (1.17.0)
-    parallel_tests (2.29.2)
+    parallel (1.19.2)
+    parallel_tests (3.3.0)
       parallel
     rake (12.3.3)
     rspec (3.8.0)
@@ -62,4 +62,4 @@ DEPENDENCIES
   wwtd
 
 BUNDLED WITH
-   2.0.1
+   2.1.4

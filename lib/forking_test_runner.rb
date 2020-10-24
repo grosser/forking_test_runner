@@ -8,6 +8,7 @@ require 'tempfile'
 
 module ForkingTestRunner
   CLEAR = "------"
+  CONVERAGE_REPORT_PREFIX = "coverage/fork-"
 
   class << self
     def cli(argv)
@@ -78,6 +79,8 @@ module ForkingTestRunner
         log = runtime_log || 'runtime.log'
         record_test_runtime(mode, results, log)
       end
+
+      summarize_partial_reports if partial_reports_for_single_cov?
 
       # exit with success or failure
       success ? 0 : 1
@@ -279,7 +282,10 @@ module ForkingTestRunner
     def run_test(file)
       stdout = change_program_name_to file do
         fork_with_captured_stdout do
-          SimpleCov.pid = Process.pid if defined?(SimpleCov) && SimpleCov.respond_to?(:pid=) # trick simplecov into reporting in this fork
+          SimpleCov.pid = Process.pid if defined?(SimpleCov) && SimpleCov.respond_to?(:pid=) # make simplecov report in this fork
+          if partial_reports_for_single_cov?
+            SingleCov.coverage_report = "#{CONVERAGE_REPORT_PREFIX}#{Process.pid}.json"
+          end
           if active_record?
             key = (ActiveRecord::VERSION::STRING >= "4.1.0" ? :test : "test")
             ActiveRecord::Base.establish_connection key
@@ -289,6 +295,10 @@ module ForkingTestRunner
       end
 
       [$?.success?, stdout]
+    end
+
+    def partial_reports_for_single_cov?
+      @options.fetch(:merge_coverage) && defined?(SingleCov) && SingleCov.respond_to?(:coverage_report=) && SingleCov.coverage_report
     end
 
     def change_program_name_to(name)
@@ -350,6 +360,26 @@ module ForkingTestRunner
           load file
         end
       end
+    end
+
+    def summarize_partial_reports
+      reports = Dir.glob("#{CONVERAGE_REPORT_PREFIX}*")
+      return if reports.empty?
+
+      require "json" # not a global dependency
+      coverage = reports.each_with_object({}) do |report, all|
+        suites = JSON.parse(File.read(report), symbolize_names: true).values
+        raise "Unsupported number of suites #{suites.size}" if suites.size != 1
+        all.replace CoverageCapture.merge_coverage(all, suites.first.fetch(:coverage))
+      ensure
+        File.unlink(report) # do not leave junk behind
+      end
+
+      data = JSON.pretty_generate("Unit Tests" => {"coverage" => coverage, "timestamp" => Time.now.to_i })
+      File.write(SingleCov.coverage_report, data)
+
+      # make it not override our report when it finishes for main process
+      SingleCov.coverage_report = nil
     end
   end
 end

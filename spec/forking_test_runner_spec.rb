@@ -1,6 +1,8 @@
 require "spec_helper"
 require "tempfile"
 require "active_record/version"
+require "json"
+require "fileutils"
 
 describe ForkingTestRunner do
   let(:root) { File.expand_path("../../", __FILE__) }
@@ -168,41 +170,30 @@ describe ForkingTestRunner do
     result.should include "AR IS UNDEFINED"
   end
 
-  if RUBY_VERSION >= "2.3.0"
-    it "can keep coverage across forks" do
-      result = with_env "COVERAGE" => "line" do
-        runner("test/coverage.rb --merge-coverage")
-      end
-      if ActiveRecord::VERSION::STRING < "4.2.0"
-        # older rails versions do some evil monkey patching that prevents us from recording coverage during fixture load
-        result.should include "user: [1, 1, 0, nil, nil] preloaded: [1, 1, 1, nil, nil, 1, 1, nil, nil]"
-      else
-        result.should include "user: [1, 1, 1, nil, nil] preloaded: [1, 1, 1, nil, nil, 1, 1, nil, nil]"
-      end
+  it "can keep coverage across forks" do
+    result = with_env "COVERAGE" => "line" do
+      runner("test/coverage.rb --merge-coverage")
     end
+    if ActiveRecord::VERSION::STRING < "4.2.0"
+      # older rails versions do some evil monkey patching that prevents us from recording coverage during fixture load
+      result.should include "user: [1, 1, 0, nil, nil] preloaded: [1, 1, 1, nil, nil, 1, 1, nil, nil]"
+    else
+      result.should include "user: [1, 1, 1, nil, nil] preloaded: [1, 1, 1, nil, nil, 1, 1, nil, nil]"
+    end
+  end
 
-    if RUBY_VERSION >= "2.5.0"
-      it "can keep branch coverage across forks" do
-        result = with_env "COVERAGE" => "branches" do
-          runner("test/coverage.rb --merge-coverage")
-        end
-        result.should include "user: {:lines=>[1, 1, 1, nil, nil], :branches=>{[:if, 0, 3, 4, 3, 36]=>{[:then, 1, 3, 4, 3, 8]=>0, [:else, 2, 3, 4, 3, 36]=>1}}} preloaded: {:lines=>[1, 1, 1, nil, nil, 1, 1, nil, nil], :branches=>{}}"
-      end
+  it "can keep branch coverage across forks" do
+    result = with_env "COVERAGE" => "branches" do
+      runner("test/coverage.rb --merge-coverage")
+    end
+    result.should include "user: {:lines=>[1, 1, 1, nil, nil], :branches=>{[:if, 0, 3, 4, 3, 36]=>{[:then, 1, 3, 4, 3, 8]=>0, [:else, 2, 3, 4, 3, 36]=>1}}} preloaded: {:lines=>[1, 1, 1, nil, nil, 1, 1, nil, nil], :branches=>{}}"
+  end
 
-      it "can merge branch coverage" do
-        ForkingTestRunner::CoverageCapture.merge_coverage(
-          {"foo.rb" => {lines: [1,2,3], branches: {foo: {bar: 0, baz: 1}}}},
-          {"foo.rb" => {lines: [1,2,3], branches: {foo: {bar: 1, baz: 0}}}}
-        ).should == {"foo.rb" => {lines: [2,4,6], branches: {foo: {bar: 1, baz: 1}}}}
-      end
-    end
-  else
-    it "explodes when trying to use coverage" do
-      result = with_env "COVERAGE" => "1" do
-        runner("test/coverage.rb --merge-coverage", fail: true)
-      end
-      result.should include "merge_coverage does not work on ruby prior to 2.3"
-    end
+  it "can merge branch coverage" do
+    ForkingTestRunner::CoverageCapture.merge_coverage(
+      {"foo.rb" => {lines: [1,2,3], branches: {foo: {bar: 0, baz: 1}}}},
+      {"foo.rb" => {lines: [1,2,3], branches: {foo: {bar: 1, baz: 0}}}}
+    ).should == {"foo.rb" => {lines: [2,4,6], branches: {foo: {bar: 1, baz: 1}}}}
   end
 
   describe "quiet mode" do
@@ -359,6 +350,29 @@ describe ForkingTestRunner do
 
         it { output_with_debug.should include('Warning: Code Under Test') }
       end
+    end
+  end
+
+  describe ".summarize_partial_reports" do
+    before do
+      ForkingTestRunner::SingleCov = "fake"
+      ForkingTestRunner::SingleCov.should_receive(:coverage_report).and_return "coverage/out.json"
+      ForkingTestRunner::SingleCov.should_receive(:coverage_report=)
+    end
+
+    after do
+      FileUtils.rm_rf("coverage")
+      ForkingTestRunner.send(:remove_const, :SingleCov)
+    end
+
+    it "works" do
+      Dir.mkdir "coverage"
+      File.write("#{ForkingTestRunner::CONVERAGE_REPORT_PREFIX}1.json", JSON.dump(a: {coverage: {b: [0, 1, 0]}}))
+      File.write("#{ForkingTestRunner::CONVERAGE_REPORT_PREFIX}2.json", JSON.dump(a: {coverage: {b: [1, 0, 0]}}))
+      ForkingTestRunner.send(:summarize_partial_reports)
+      out = JSON.parse(File.read("coverage/out.json"), symbolize_names: true)
+      out[:"Unit Tests"].delete :timestamp
+      out.should == { "Unit Tests": {coverage: { b: [1, 1, 0] } } }
     end
   end
 end
