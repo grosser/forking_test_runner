@@ -358,6 +358,8 @@ describe ForkingTestRunner do
       ForkingTestRunner::SingleCov = "fake"
       ForkingTestRunner::SingleCov.should_receive(:coverage_report).and_return "coverage/out.json"
       ForkingTestRunner::SingleCov.should_receive(:coverage_report=)
+      ForkingTestRunner.instance_variable_set(:@options, {})
+      Dir.mkdir "coverage"
     end
 
     after do
@@ -366,13 +368,22 @@ describe ForkingTestRunner do
     end
 
     it "works" do
-      Dir.mkdir "coverage"
       File.write("#{ForkingTestRunner::CONVERAGE_REPORT_PREFIX}1.json", JSON.dump(a: {coverage: {b: [0, 1, 0]}}))
       File.write("#{ForkingTestRunner::CONVERAGE_REPORT_PREFIX}2.json", JSON.dump(a: {coverage: {b: [1, 0, 0]}}))
       ForkingTestRunner.send(:summarize_partial_reports)
       out = JSON.parse(File.read("coverage/out.json"), symbolize_names: true)
-      out[:"Unit Tests"].delete :timestamp
-      out.should == { "Unit Tests": {coverage: { b: [1, 1, 0] } } }
+      out[:"Minitest"].delete :timestamp
+      out.should == { "Minitest": {coverage: { b: [1, 1, 0] } } }
+    end
+
+    it "can report line coverage" do
+      File.write("#{ForkingTestRunner::CONVERAGE_REPORT_PREFIX}1.json", JSON.dump(a: {coverage: {b: {lines: [0, 1, 0], branches: []}}}))
+      File.write("#{ForkingTestRunner::CONVERAGE_REPORT_PREFIX}2.json", JSON.dump(a: {coverage: {b: {lines: [1, 0, 0], branches: []}}}))
+      ForkingTestRunner.instance_variable_set(:@options, report_line_coverage: true)
+      ForkingTestRunner.send(:summarize_partial_reports)
+      out = JSON.parse(File.read("coverage/out.json"), symbolize_names: true)
+      out[:"Minitest"].delete :timestamp
+      out.should == { "Minitest": {coverage: { b: [1, 1, 0] } } }
     end
   end
 end

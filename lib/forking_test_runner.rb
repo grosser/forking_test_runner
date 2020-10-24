@@ -375,7 +375,11 @@ module ForkingTestRunner
         File.unlink(report) # do not leave junk behind
       end
 
-      data = JSON.pretty_generate("Unit Tests" => {"coverage" => coverage, "timestamp" => Time.now.to_i })
+      # report only line coverage to be backwards compatible for some coverage backends
+      coverage.transform_values! { |v| v.is_a?(Hash) ? v.fetch(:lines) : v } if @options[:report_line_coverage]
+
+      # chose "Minitest" because it is what simplecov uses for reports and "Unit Tests" makes sonarqube break
+      data = JSON.pretty_generate("Minitest" => {"coverage" => coverage, "timestamp" => Time.now.to_i })
       File.write(SingleCov.coverage_report, data)
 
       # make it not override our report when it finishes for main process
