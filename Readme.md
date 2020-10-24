@@ -105,7 +105,8 @@ forking-test-runner folder [options]
     --quiet                      Quiet
     --no-fixtures                Do not load fixtures
     --no-ar                      Disable ActiveRecord logic
-    --merge-coverage             Merge base code coverage into indvidual files coverage, great for SingleCov
+    --merge-coverage             Merge base code coverage into individual files coverage and summarize coverage report
+    --report-line-coverage       Convert coverage report to line coverage (for compatibility)
     --record-runtime=MODE        
       Record test runtime:
         simple = write to disk at --runtime-log)
