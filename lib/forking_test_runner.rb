@@ -365,21 +365,20 @@ module ForkingTestRunner
     def summarize_partial_reports
       reports = Dir.glob("#{CONVERAGE_REPORT_PREFIX}*")
       return if reports.empty?
+      key = nil
 
       require "json" # not a global dependency
       coverage = reports.each_with_object({}) do |report, all|
-        suites = JSON.parse(File.read(report), symbolize_names: true).values
+        data = JSON.parse(File.read(report), symbolize_names: true)
+        key ||= data.keys.first
+        suites = data.values
         raise "Unsupported number of suites #{suites.size}" if suites.size != 1
         all.replace CoverageCapture.merge_coverage(all, suites.first.fetch(:coverage))
       ensure
         File.unlink(report) # do not leave junk behind
       end
 
-      # report only line coverage to be backwards compatible for some coverage backends
-      coverage.transform_values! { |v| v.is_a?(Hash) ? v.fetch(:lines) : v } if @options[:report_line_coverage]
-
-      # chose "Minitest" because it is what simplecov uses for reports and "Unit Tests" makes sonarqube break
-      data = JSON.pretty_generate("Minitest" => {"coverage" => coverage, "timestamp" => Time.now.to_i })
+      data = JSON.pretty_generate(key => {"coverage" => coverage, "timestamp" => Time.now.to_i })
       File.write(SingleCov.coverage_report, data)
 
       # make it not override our report when it finishes for main process

@@ -25,5 +25,10 @@ task default: :spec
 
 desc "Run tests"
 task :spec do
-  sh "bundle exec rspec spec/forking_test_runner_spec.rb"
+  cmd = "bundle exec rspec spec/forking_test_runner_spec.rb"
+  if ENV["CI"] # clearing env breaks CI but is needed locally
+    sh cmd
+  else
+    Bundler.with_unbundled_env { sh cmd }
+  end
 end
