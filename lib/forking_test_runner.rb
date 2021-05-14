@@ -282,7 +282,10 @@ module ForkingTestRunner
     def run_test(file)
       stdout = change_program_name_to file do
         fork_with_captured_stdout do
-          SimpleCov.pid = Process.pid if defined?(SimpleCov) && SimpleCov.respond_to?(:pid=) # make simplecov report in this fork
+          if defined?(SimpleCov)
+            SimpleCov.pid = Process.pid
+            SimpleCov.command_name file
+          end
           if partial_reports_for_single_cov?
             SingleCov.coverage_report = "#{CONVERAGE_REPORT_PREFIX}#{Process.pid}.json"
           end
