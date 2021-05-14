@@ -253,7 +253,7 @@ module ForkingTestRunner
     def fork_with_captured_stdout
       rpipe, wpipe = IO.pipe
 
-      child = fork do
+      child = Process.fork do
         rpipe.close
         preserve_tty { $stdout.reopen(wpipe) }
         yield
