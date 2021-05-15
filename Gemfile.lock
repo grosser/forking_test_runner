@@ -45,7 +45,6 @@ GEM
     thread_safe (0.3.6)
     tzinfo (1.2.5)
       thread_safe (~> 0.1)
-    wwtd (1.4.0)
     zeitwerk (2.1.9)
 
 PLATFORMS
@@ -59,7 +58,6 @@ DEPENDENCIES
   rake
   rspec
   sqlite3
-  wwtd
 
 BUNDLED WITH
-   2.1.4
+   2.2.16

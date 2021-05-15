@@ -134,8 +134,8 @@ Development
 ===========
 
  - `bundle exec rake` run tests
- - `bundle exec wwtd:local` run tests on all supported gemfiles
- - `bundle exec wwtd` run tests on all supported rubies and gemfiles
+ - `BUNDLE_GEMFILE=gemfiles/60.gemfile bundle exec rake` run tests on specific gemfile
+ - `bundle exec rake bundle_all` to update all Gemfiles (prefer ruby 2.5)
 
 
 Authors
@@ -148,4 +148,4 @@ Authors
 [Michael Grosser](https://grosser.it)<br/>
 michael@grosser.it<br/>
 License: MIT<br/>
-[![Build Status](https://travis-ci.org/grosser/forking_test_runner.svg)](https://travis-ci.org/grosser/forking_test_runner)
+[![CI](https://github.com/grosser/forking_test_runner/actions/workflows/actions.yml/badge.svg?branch=master)](https://github.com/grosser/forking_test_runner/actions/workflows/actions.yml?query=branch%3Amaster)

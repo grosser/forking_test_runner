@@ -1,0 +1,28 @@
+name: CI
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ruby: ['2.5', '2.6', '2.7']
+        gemfile: ['42', '52', '60', '61']
+        exclude:
+        - ruby: '2.6'
+          gemfile: '42'
+        - ruby: '2.7'
+          gemfile: '42'
+    name: ruby${{ matrix.ruby }} gemfiles/${{ matrix.gemfile }}.gemfile rake
+    env:
+      BUNDLE_GEMFILE: gemfiles/${{ matrix.gemfile }}.gemfile
+    steps:
+    - uses: zendesk/checkout@v2
+    - uses: zendesk/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby }}
+        bundler-cache: true
+    - run: bundle exec rake

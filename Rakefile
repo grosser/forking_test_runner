@@ -1,7 +1,6 @@
 require "bundler/setup"
 require "bundler/gem_tasks"
 require "bump/tasks"
-require "wwtd/tasks"
 
 # update readme before new change is committed
 class << Bump::Bump
@@ -29,6 +28,16 @@ task :spec do
   if ENV["CI"] # clearing env breaks CI but is needed locally
     sh cmd
   else
-    Bundler.with_unbundled_env { sh cmd }
+    Bundler.with_original_env { sh cmd }
+  end
+end
+
+desc "Bundle all gemfiles"
+task :bundle_all do
+  Bundler.with_original_env do
+    Dir["gemfiles/*.gemfile"].each do |gemfile|
+      sh "BUNDLE_GEMFILE=#{gemfile} bundle"
+      sh "BUNDLE_GEMFILE=#{gemfile} bundle lock --add-platform x86_64-linux" # for github
+    end
   end
 end
