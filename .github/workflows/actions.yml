@@ -19,6 +19,7 @@ jobs:
     name: ruby${{ matrix.ruby }} gemfiles/${{ matrix.gemfile }}.gemfile rake
     env:
       BUNDLE_GEMFILE: gemfiles/${{ matrix.gemfile }}.gemfile
+      BUNDLE_DEPLOYMENT: "false"
     steps:
     - uses: zendesk/checkout@v2
     - uses: zendesk/setup-ruby@v1
