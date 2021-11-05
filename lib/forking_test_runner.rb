@@ -11,6 +11,9 @@ module ForkingTestRunner
   CONVERAGE_REPORT_PREFIX = "coverage/fork-"
 
   class << self
+
+    attr_accessor :before_fork_callbacks, :after_fork_callbacks
+
     def cli(argv)
       @options, tests = CLI.parse_options(argv)
 
@@ -33,6 +36,9 @@ module ForkingTestRunner
       else
         puts "Running tests #{all_tests.map(&:first).join(" ")}"
       end
+
+      @before_fork_callbacks = []
+      @after_fork_callbacks = []
 
       # run all the tests
       results = with_lock do |lock|
@@ -195,6 +201,7 @@ module ForkingTestRunner
         preload_fixtures
         ActiveRecord::Base.connection.disconnect!
       end
+      @before_fork_callbacks.each(&:call)
 
       CoverageCapture.capture! if @options.fetch(:merge_coverage)
     end
@@ -289,6 +296,9 @@ module ForkingTestRunner
           if partial_reports_for_single_cov?
             SingleCov.coverage_report = "#{CONVERAGE_REPORT_PREFIX}#{Process.pid}.json"
           end
+
+          @after_fork_callbacks.each(&:call)
+
           if active_record?
             key = (ActiveRecord::VERSION::STRING >= "4.1.0" ? :test : "test")
             ActiveRecord::Base.establish_connection key

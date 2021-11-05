@@ -317,6 +317,24 @@ describe ForkingTestRunner do
     end
   end
 
+  describe "before_fork_callbacks and after_fork_callbacks" do
+    before do
+      @tempfile = Tempfile.new
+    end
+
+    after do
+      @tempfile.close
+      @tempfile.unlink
+    end
+
+    it "runs them" do
+      with_env("DUMMY_SPEC_CALLBACK_FILE" =>  @tempfile.path) do
+        runner("test/simple_test.rb")
+      end
+      @tempfile.read.should == "before_fork_called\nafter_fork_called\n"
+    end
+  end
+
   describe "rspec" do
     it "can run passing tests" do
       runner("spec/passing --rspec").should include "1 example, 0 failures"

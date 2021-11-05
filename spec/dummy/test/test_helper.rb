@@ -11,3 +11,16 @@ end
 
 require_relative "../setup_test_model"
 require_relative "no_ar_helper"
+
+if ENV.key?("DUMMY_SPEC_CALLBACK_FILE")
+  ForkingTestRunner.before_fork_callbacks << Proc.new do
+    File.open(ENV["DUMMY_SPEC_CALLBACK_FILE"], 'a') do |f|
+      f.write "before_fork_called\n"
+    end
+  end
+  ForkingTestRunner.after_fork_callbacks << Proc.new do
+    File.open(ENV["DUMMY_SPEC_CALLBACK_FILE"], 'a') do |f|
+      f.write "after_fork_called\n"
+    end
+  end
+end
