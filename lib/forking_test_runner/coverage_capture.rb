@@ -23,22 +23,44 @@ module ForkingTestRunner
       end
 
       def merge_coverage(a, b)
-        merged = a.dup
-        b.each do |file, coverage|
-          orig = merged[file]
-          merged[file] = if orig
-            if coverage.is_a?(Array)
-              merge_lines_coverage(orig, coverage)
-            else
-              {
-                lines: merge_lines_coverage(orig.fetch(:lines), coverage.fetch(:lines)),
-                branches: merge_branches_coverage(orig.fetch(:branches), coverage.fetch(:branches))
-              }
+        if defined?(SingleCov)
+          covered_files = SingleCov::COVERAGES.map do |file, uncovered|
+            "#{SingleCov.send(:root)}/#{file}"
+          end
+
+          merged = covered_files.each_with_object({}) do |file, obj|
+            if coverage = b[file]
+              orig = a[file]
+              obj[file] = if coverage.is_a?(Array)
+                merge_lines_coverage(orig, coverage)
+              else
+                {
+                  lines: merge_lines_coverage(orig.fetch(:lines), coverage.fetch(:lines)),
+                  branches: merge_branches_coverage(orig.fetch(:branches), coverage.fetch(:branches))
+                }
+              end
             end
-          else
-            coverage
+          end
+        else
+          merged = a.dup
+
+          b.each do |file, coverage|
+            orig = merged[file]
+            merged[file] = if orig
+              if coverage.is_a?(Array)
+                merge_lines_coverage(orig, coverage)
+              else
+                {
+                  lines: merge_lines_coverage(orig.fetch(:lines), coverage.fetch(:lines)),
+                  branches: merge_branches_coverage(orig.fetch(:branches), coverage.fetch(:branches))
+                }
+              end
+            else
+              coverage
+            end
           end
         end
+
         merged
       end
 
