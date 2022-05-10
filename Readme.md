@@ -106,6 +106,7 @@ forking-test-runner folder [options]
     --no-fixtures                Do not load fixtures
     --no-ar                      Disable ActiveRecord logic
     --merge-coverage             Merge base code coverage into individual files coverage and summarize coverage report
+    --only-merge-configured      Do not merge unconfigured coverage to avoid overhead (needs --merge-coverage)
     --record-runtime=MODE        
       Record test runtime:
         simple = write to disk at --runtime-log)

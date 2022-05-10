@@ -203,7 +203,12 @@ module ForkingTestRunner
       end
       @before_fork_callbacks.each(&:call)
 
-      CoverageCapture.capture! if @options.fetch(:merge_coverage)
+      if @options.fetch(:merge_coverage)
+        CoverageCapture.capture!
+        if @options.fetch(:only_merge_configured)
+          CoverageCapture.coverage.delete_if { |f| !SingleCov::COVERAGES["#{SingleCov.send(:root)}/#{f}"] }
+        end
+      end
     end
 
     def reraise_clean_ar_error
