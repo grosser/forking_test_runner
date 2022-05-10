@@ -9,13 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ruby: ['2.5', '2.6', '2.7']
-        gemfile: ['42', '52', '60', '61']
-        exclude:
-        - ruby: '2.6'
-          gemfile: '42'
-        - ruby: '2.7'
-          gemfile: '42'
+        ruby: ['2.7']
+        gemfile: ['52', '60', '61']
     name: ruby${{ matrix.ruby }} gemfiles/${{ matrix.gemfile }}.gemfile rake
     env:
       BUNDLE_GEMFILE: gemfiles/${{ matrix.gemfile }}.gemfile
