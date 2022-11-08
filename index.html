@@ -1,0 +1,1661 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap Project</title>
+    
+    <!-- vendor css -->    
+    <link rel="stylesheet" href="assets/css/jquery.countdown.css">
+    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hover.css/2.1.1/css/hover-min.css" >
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- my css  -->
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link href="assets/css/responsive.css" rel="stylesheet">
+  </head>
+  <body>
+    <!-- start header top section -->
+    <section class="header_top_area p-3 mb-3">
+      <div class="container">
+        <div class="row">
+          <div class="header_section d-flex flex-wrap justify-content-between align-items-center">
+
+            <div class="logo_section col-lg-2 col-4 col-md-3">
+              <img src="assets/img/logo.png" alt="">
+            </div>
+
+            <div class="header_input d-flex align-items-center border col-lg-8 col-md-6 rounded-1 res_dn">
+              <i class="fa-solid fa-magnifying-glass ps-3"></i>
+              <input type="text" class="form-control border-0 " placeholder="what are you looking for...." data-bs-toggle="modal" data-bs-target="#exampleModal">
+            </div>
+
+            <div class="header_currency col-lg-1 position-relative ">
+              <button class="bg-white border p-2 rounded-1 float-end fw-bold text-center" data-bs-toggle="collapse" data-bs-target="#currency_1" aria-expanded="false" aria-controls="currency_1"> USD <i class="fa-solid fa-angle-down"></i>
+              </button>
+              <ul class="list-unstyled position-absolute bg-white w-100 border shadow collapse rounded shadow " id="currency_1">
+                <li>BDT</li>
+                <li>INR</li>
+                <li>EUR</li>
+                <li>GBP</li>
+              </ul>
+            </div>
+
+            <div class="header_currency col-lg-1 position-relative">
+              <button class="bg-white border p-2 rounded-1 float-end fw-bold text-center" onClick="document.getElementById('pol').style.display='block'"> ENG <i class="fa-solid fa-angle-down"></i>
+              </button>
+              <ul class="list-unstyled position-absolute bg-white w-100 border shadow collapse rounded shadow" id="pol">
+                <li>BANGLA</li>
+                <li>HINDI</li>
+                <li>ARABIC</li>
+                <li>URDU</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- start header Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModal" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="m-auto border p-4 header_modal rounded shadow w-100 position-relative">
+            <button type="button" class=" opacity-100  btn-close position-absolute top-0 modal_cross rounded-5 btn-light" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="header_input d-flex align-items-center border rounded-1 p-2 mb-4">
+              <i class="fa-solid fa-magnifying-glass ps-3"></i>
+              <input type="text" class="form-control border-0" placeholder="write something...">
+            </div>
+            <p>24 Result Found <span class="float-end bgx position-relative">View All</span>
+            </p>
+            <hr style="border-color:#bac8d5;">
+            <div class="modal_box mb-4">
+              <div class="header_modal_box border rounded p-3 d-flex justify-content-between pt-4">
+                <div class="header_modal_img me-3 mt-1 overflow-hidden col-4">
+                  <img src="assets/img/product-09.png" alt="product-img" class="rounded img-fluid">
+                </div>
+                <div class="header_modal_content px-2 py-3 w-75">
+                  <i class="fa-solid fa-star text-warning fa-sm"></i>
+                  <i class="fa-solid fa-star text-warning fa-sm"></i>
+                  <i class="fa-solid fa-star text-warning fa-sm"></i>
+                  <i class="fa-solid fa-star text-warning fa-sm"></i>
+                  <i class="fa-regular fa-star text-warning fa-sm"></i>
+                  <small class="ms-2 small">
+                    <b>100+ </b> reviews </small>
+                  <p class="mt-1 mb-2">
+                    <a href="" class="text-black text-decoration-none text-muted"> Media Remote</a>
+                  </p>
+                  <p class="fs-5 fw-bold "> $29.99 <span class="opacity-25 ms-3">$49.99</span>
+                  </p>
+                </div>
+                <div class="header_modal_icon d-flex flex-column align-items-end px-2 py-3">
+                  <i class="fa-solid fa-cart-shopping border p-2 mb-3 text-muted"></i>
+                  <i class="fa-regular fa-heart border p-2 text-muted"></i>
+                </div>
+              </div>
+            </div>
+            <div class="modal_box mb-4">
+              <div class="header_modal_box border rounded p-3 d-flex justify-content-between pt-4">
+                <div class="header_modal_img me-3 mt-1 overflow-hidden">
+                  <img src="assets/img/product-09.png" alt="product-img" class="rounded img-fluid">
+                </div>
+                <div class="header_modal_content px-2 py-3 w-75">
+                  <i class="fa-solid fa-star text-warning fa-sm"></i>
+                  <i class="fa-solid fa-star text-warning fa-sm"></i>
+                  <i class="fa-solid fa-star text-warning fa-sm"></i>
+                  <i class="fa-solid fa-star text-warning fa-sm"></i>
+                  <i class="fa-regular fa-star text-warning fa-sm"></i>
+                  <small class="ms-2 small">
+                    <b>100+ </b> reviews </small>
+                  <p class="mt-1 mb-2">
+                    <a href="" class="text-black text-decoration-none text-muted"> Media Remote</a>
+                  </p>
+                  <p class="fs-5 fw-bold "> $29.99 <span class="opacity-25 ms-3">$49.99</span>
+                  </p>
+                </div>
+                <div class="header_modal_icon d-flex flex-column align-items-end px-2 py-3">
+                  <i class="fa-solid fa-cart-shopping border p-2 mb-3 text-muted"></i>
+                  <i class="fa-regular fa-heart border p-2 text-muted"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- end header Modal -->
+    <!-- end header top section -->
+
+
+        <!-- START MENU AREA -->
+    <div class="menu_area bg-light">
+      <div class="container">
+        <div class="row">
+          <div class="menu_section d-flex position-relative">
+            <!-- LEFT SECTION -->
+            <aside class="section_left col-lg-2" id="toggle_button">
+              <div class="category_box bg-primary text-white p-3 px-4">
+                <i class="fa-solid fa-bars mx-3"></i>
+                <h2 class="fs-6 d-inline">Categories</h2>
+              </div>
+              <!-- CATEGORY ITEMS -->
+              <div class="category_items p-3 pb-0 border" id="close_item">
+                <div class="category_items_wrap">
+                  <div class="cat_items_box py-3 position-relative">
+                    <img src="assets/img/cat-01.png" alt="catalog 1" class="">
+                    <p class="text-muted d-inline me-1">Fashion <i class="fa-solid fa-angle-down fa-sm float-end"></i>
+                    </p>
+                    <!-- SUB ITEMS ON HOVER -->
+                    <div class="sub_items_section sub_1 bg-white rounded-end p-5 animate__fadeIn animate__animated ">
+                      <div class="col-2 float-start">
+                        <ul class="list-unstyled">
+                          <li>
+                            <a href="">Babys</a>
+                          </li>
+                          <li>
+                            <a href="">t-shirt</a>
+                          </li>
+                          <li>
+                            <a href="">pent</a>
+                          </li>
+                          <li>
+                            <a href="">panjabi</a>
+                          </li>
+                          <li>
+                            <a href="">ganji</a>
+                          </li>
+                          <li>
+                            <a href="">watch</a>
+                          </li>
+                          <li>
+                            <a href="">sunglass</a>
+                          </li>
+                          <li>
+                            <a href="">bodyspary</a>
+                          </li>
+                          <li>
+                            <a href="">cap</a>
+                          </li>
+                          <li>
+                            <a href="">ganji</a>
+                          </li>
+                        </ul>
+                      </div>
+                      <div class="col-2 float-start">
+                        <ul class="list-unstyled">
+                          <li>
+                            <a href="">Men</a>
+                          </li>
+                          <li>
+                            <a href="">t-shirt</a>
+                          </li>
+                          <li>
+                            <a href="">pent</a>
+                          </li>
+                          <li>
+                            <a href="">panjabi</a>
+                          </li>
+                          <li>
+                            <a href="">ganji</a>
+                          </li>
+                        </ul>
+                        <ul class="list-unstyled">
+                          <li>
+                            <a href="">Girls</a>
+                          </li>
+                          <li>
+                            <a href="">t-shirt</a>
+                          </li>
+                          <li>
+                            <a href="">pent</a>
+                          </li>
+                          <li>
+                            <a href="">panjabi</a>
+                          </li>
+                          <li>
+                            <a href="">ganji</a>
+                          </li>
+                        </ul>
+                      </div>
+                      <div class="col-2 float-start">
+                        <ul class="list-unstyled">
+                          <li>
+                            <a href="">others</a>
+                          </li>
+                          <li>
+                            <a href="">t-shirt</a>
+                          </li>
+                          <li>
+                            <a href="">pent</a>
+                          </li>
+                          <li>
+                            <a href="">panjabi</a>
+                          </li>
+                          <li>
+                            <a href="">ganji</a>
+                          </li>
+                        </ul>
+                      </div>
+                      <div class="col-1 float-start vr"></div>
+                      <div class="col-5 float-start d-flex flex-column justify-content-center align-items-end animate__pulse animate__animated">
+                        <div class="header_custom w-100">
+                          <h3 class="fs-6 fw-bold mt-1 ">Featured</h3>
+                        </div>
+                        <img src="assets/img/product-feature2.png" alt="" class="w-75 mb-3">
+                        <img src="assets/img/product-feature1.png" alt="" class="w-75 mb-3">
+                        <div class="img_wrap_custom w-100">
+                          <img src="assets/img/product-feature4.png" alt="">
+                          <img src="assets/img/product-feature3.png" alt="">
+                        </div>
+                        <div class="sub_item_button">
+                          <button class="big_button btn btn-primary ">See All Items</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="cat_items_box py-3 position-relative">
+                    <img src="assets/img/cat-02.png" alt="catalog 1" class="">
+                    <p class="text-muted d-inline me-1">Electronics <i class="fa-solid fa-angle-down fa-sm float-end "></i>
+                    </p>
+                    <!-- SUB ITEMS ON HOVER -->
+                    <div class="sub_items_section sub_2 bg-white rounded-end p-5 animate__fadeIn animate__animated ">
+                      <div class="col-2 float-start">
+                        <ul class="list-unstyled">
+                          <li>
+                            <a href="">Men</a>
+                          </li>
+                          <li>
+                            <a href="">t-shirt</a>
+                          </li>
+                          <li>
+                            <a href="">pent</a>
+                          </li>
+                          <li>
+                            <a href="">panjabi</a>
+                          </li>
+                          <li>
+                            <a href="">ganji</a>
+                          </li>
+                        </ul>
+                        <ul class="list-unstyled">
+                          <li>
+                            <a href="">Girls</a>
+                          </li>
+                          <li>
+                            <a href="">t-shirt</a>
+                          </li>
+                          <li>
+                            <a href="">pent</a>
+                          </li>
+                          <li>
+                            <a href="">panjabi</a>
+                          </li>
+                          <li>
+                            <a href="">ganji</a>
+                          </li>
+                        </ul>
+                      </div>
+                      <div class="col-2 float-start">
+                        <ul class="list-unstyled">
+                          <li>
+                            <a href="">Babys</a>
+                          </li>
+                          <li>
+                            <a href="">t-shirt</a>
+                          </li>
+                          <li>
+                            <a href="">pent</a>
+                          </li>
+                          <li>
+                            <a href="">panjabi</a>
+                          </li>
+                          <li>
+                            <a href="">ganji</a>
+                          </li>
+                          <li>
+                            <a href="">watch</a>
+                          </li>
+                          <li>
+                            <a href="">sunglass</a>
+                          </li>
+                          <li>
+                            <a href="">bodyspary</a>
+                          </li>
+                          <li>
+                            <a href="">cap</a>
+                          </li>
+                          <li>
+                            <a href="">ganji</a>
+                          </li>
+                        </ul>
+                      </div>
+                      <div class="col-2 float-start">
+                        <ul class="list-unstyled">
+                          <li>
+                            <a href="">Women</a>
+                          </li>
+                          <li>
+                            <a href="">t-shirt</a>
+                          </li>
+                          <li>
+                            <a href="">pent</a>
+                          </li>
+                          <li>
+                            <a href="">panjabi</a>
+                          </li>
+                          <li>
+                            <a href="">ganji</a>
+                          </li>
+                        </ul>
+                      </div>
+                      <div class="col-1 float-start vr"></div>
+                      <div class="col-5 float-start d-flex flex-column justify-content-center align-items-end animate__pulse animate__animated ">
+                        <div class="header_custom w-100">
+                          <h3 class="fs-6 fw-bold mt-1 ">Featured</h3>
+                        </div>
+                        <img src="assets/img/product-feature1.png" alt="" class="w-75 mb-3">
+                        <img src="assets/img/product-feature2.png" alt="" class="w-75 mb-3">
+                        <div class="img_wrap_custom w-100">
+                          <img src="assets/img/product-feature3.png" alt="">
+                          <img src="assets/img/product-feature4.png" alt="">
+                        </div>
+                        <div class="sub_item_button">
+                          <button class="big_button btn btn-primary ">See All Items</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="cat_items_box py-3 position-relative">
+                    <img src="assets/img/cat-04.png" alt="catalog 1" class="">
+                    <p class="text-muted d-inline me-1">Home Decor </p>
+                  </div>
+                  <div class="cat_items_box py-3 position-relative">
+                    <img src="assets/img/cat-01.png" alt="catalog 1" class="">
+                    <p class="text-muted d-inline me-1">Fashion <i class="fa-solid fa-angle-down fa-sm float-end"></i>
+                    </p>
+                  </div>
+                  <div class="cat_items_box py-3 position-relative">
+                    <img src="assets/img/cat-02.png" alt="catalog 1" class="">
+                    <p class="text-muted d-inline me-1">Electronics </p>
+                  </div>
+                  <div class="cat_items_box py-3 position-relative">
+                    <img src="assets/img/cat-04.png" alt="catalog 1" class="">
+                    <p class="text-muted d-inline me-1">Home Decor </p>
+                  </div>
+                </div>
+              </div>
+            </aside>
+            <!-- aside end -->
+            <!-- RIGHT SECTION -->
+            <div class="section_right col-lg-10 col-12">
+              <div class="section_right_menu mb-4">
+                <nav class="navbar navbar-expand-md bg-light">
+                 
+                  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                  </button>
+                  <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav menu1">
+                      <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">Home </a>
+                      </li>
+
+                      <li class="nav-item dropdown">
+                        <a class="nav-link" href="#"> Shop <i class="fa-solid fa-angle-down fa-xs text-secondary"></i> </a>
+                        <ul class="dropdown-menu">
+                          <li>
+                            <a class="dropdown-item" href="#">Action</a>
+                          </li>
+                          <li>
+                            <a class="dropdown-item" href="#">Another action</a>
+                          </li>
+                          <li>
+                            <a class="dropdown-item" href="#">Something else here</a>
+                          </li>
+                        </ul>
+                      </li>
+
+        
+                      <li class="nav-item dropdown">
+                        <a class="nav-link" href="#"> Pages <i class="fa-solid fa-angle-down fa-xs text-secondary"></i> </a>
+                        <ul class="dropdown-menu">
+                          <li>
+                            <a class="dropdown-item" href="#">Action</a>
+                          </li>
+                          <li>
+                            <a class="dropdown-item" href="#">Another action</a>
+                          </li>
+                          <li>
+                            <a class="dropdown-item" href="#">Something else here</a>
+                          </li>
+                        </ul>
+                      </li>
+
+                      <li class="nav-item">
+                        <a class="nav-link" href="#">about</a>
+                      </li>
+
+                      <li class="nav-item">
+                        <a class="nav-link" href="#">blog</a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" href="#">contact</a>
+                      </li>
+
+                    </ul>
+                  </div>
+                  <div class="menu_icons d-flex align-items-center">
+                  <a href="#exampleModal" data-bs-toggle="modal">  <i class="res_search_none fa-solid fa-search me-3" ></i></a>
+                    <ul class="navbar-nav">
+                      <li>  <a href="" class="hvr-rectangle-out">  <i class="fa-regular fa-heart "></i></a></li>
+                      <li> <a href="" class="hvr-rectangle-out">  <i class="bi bi-cart2"></i></a></li>
+                      <li><a href="" class="hvr-rectangle-out">  <i class="fa-regular fa-user"></i></a></li>
+                    </ul>           
+                  </div>
+                </nav>                
+              </div>
+
+
+              <div class="slider_section ms-4 d-flex align-items-center">
+                <div class="col-lg-9 col-12 col-sm-12 col-md-9 ">
+                  <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="true">
+                    <div class="carousel-indicators">
+                      <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active " aria-current="true" aria-label="Slide 1"></button>
+                      <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                      <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                    </div>
+                    <div class="carousel-inner">
+                      <div class="carousel-item active" data-bs-interval="1000000">
+                        <div class="carosel_item_wrap d-flex justify-content-between p-5 my-4">
+                            <div class="carosel_left">
+                              <span> <i class="bi bi-watch"></i> Smartwatch</span>
+                              <h2 class="fw-bold display-5 mb-5 animate__slideInUp animate__animated">Bloosom <br> Smart Watch</h2>
+                              <a href=""> shop now <i class="fa-solid fa-arrow-right float-end"></i> </a>
+                            </div>
+                            <div class="carosel_right animate__animated animate__slideInRight">
+                              <img src="assets/img/product-40.png" alt="">
+                            </div>
+                        </div>
+                      </div>
+                      <div class="carousel-item">
+                        <div class="carosel_item_wrap d-flex justify-content-between p-5 my-4">
+                          <div class="carosel_left">
+                            <span> <i class="bi bi-watch"></i> Smartwatch</span>
+                            <h2 class="fw-bold display-5 mb-5 animate__slideInUp animate__animated">Delux <br> Brand Watch</h2>
+                            <a href=""> shop now <i class="fa-solid fa-arrow-right float-end"></i> </a>
+                          </div>
+                          <div class="carosel_right animate__animated animate__slideInRight">
+                            <img src="assets/img/product-46.png" alt="">
+                          </div>
+                      </div>
+                      </div>
+                      <div class="carousel-item">
+                        <div class="carosel_item_wrap d-flex justify-content-between p-5 my-4">
+                          <div class="carosel_left">
+                            <span> <i class="bi bi-watch"></i> Smartwatch</span>
+                            <h2 class="fw-bold display-5 mb-5 animate__slideInUp animate__animated">Bloosom <br> Smart Watch</h2>
+                            <a href=""> shop now <i class="fa-solid fa-arrow-right float-end"></i> </a>
+                          </div>
+                          <div class="carosel_right animate__animated animate__slideInRight">
+                            <img src="assets/img/product-40.png" alt="">
+                          </div>
+                      </div>
+                      </div>
+                    </div>
+
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                      <span class="visually-hidden">Previous</span>
+                    </button>
+                    
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                      <span class="visually-hidden">Next</span>
+                    </button>
+
+                  </div>
+                </div>
+
+                <div class="col-lg-3 ps-4 col-8 col-sm-10 col-md-3 res_mrgn ">
+                  <div class="slider_right_item bg-light h-100 d-flex justify-content-center align-items-center flex-column">
+                    <img src="assets/img/product-41.png" alt="" class="img-fluid">
+                    <h2 class="fs-6 text-secondary mt-4">Yantiti Leather Bags</h2>
+                    <span class="fs-5 fw-bold">$49.99</span>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- END MENU AREA -->
+
+<!--  START slider bottom section -->
+
+    <div class="slider_bottom_area">
+      <div class="container px-4">
+        <div class="row">
+            <div class="col-lg-3 col-8 col-sm-5  border rounded py-5 px-4 d-flex flex-column justify-content-center align-items-center slider_bottom_box">
+              <img src="assets/img/service1.png" alt="service img 1">
+              <h2 class="fs-6 fw-bold mt-3 lh-base text-center">Fast & Secure <br> Delivery</h2>
+            </div>
+
+            <div class="col-lg-3 col-8 col-sm-5  border rounded py-5 px-4 d-flex flex-column justify-content-center align-items-center slider_bottom_box">
+              <img src="assets/img/service2.png" alt="service img 1">
+              <h2 class="fs-6 fw-bold mt-3 lh-base text-center">100% Guarantee  <br> On Product</h2>
+            </div>
+            <div class="col-lg-3 col-8 col-sm-5 border rounded py-5 px-4 d-flex flex-column justify-content-center align-items-center slider_bottom_box">
+              <img src="assets/img/service3.png" alt="service img 1">
+              <h2 class="fs-6 fw-bold mt-3 lh-base text-center">24 Hour Return  <br> Policy</h2>
+            </div>
+            
+            <div class="col-lg-3 col-8 col-sm-5  border rounded py-5 px-4 d-flex flex-column justify-content-center align-items-center slider_bottom_box">
+              <img src="assets/img/service4.png" alt="service img 1">
+              <h2 class="fs-6 fw-bold mt-3 lh-base text-center">Next Level Pro  <br> Quality</h2>
+            </div>
+            
+            <div class="col-lg-3 col-8 col-sm-5 border rounded py-5 px-4 d-flex flex-column justify-content-center align-items-center slider_bottom_box">
+              <img src="assets/img/service5.png" alt="service img 1">
+              <h2 class="fs-6 fw-bold mt-3 lh-base text-center">24 Hour Return  <br> Policy</h2>
+            </div>  
+
+        </div>
+      </div>
+    </div>
+
+<!--  END slider bottom section -->
+
+<!-- START NEW ARRIVALS -->
+
+
+<div class="new_arrival_area my-5">
+  <div class="container">
+    <div class="row">
+
+      <div class="new_arrival_header mb-4">
+        <h3> <i class="fa-solid fa-basket-shopping"></i> This Week’s</h3>
+        <h2 class="fw-bold mt-3 fs-2 d-inline-block">New Arrivals</h2>
+          <div class="carosel_controls float-end d-flex ">
+            <div class="scroll_left position-relative overflow-hidden">
+              <i class="fa-solid fa-arrow-left" data-bs-target="#new_arrival" data-bs-slide="prev" ></i>
+            </div>
+            <div class="scroll_right position-relative overflow-hidden">
+              <i class="fa-solid fa-arrow-right" data-bs-target="#new_arrival" data-bs-slide="next"></i>
+            </div>
+          </div>
+
+      </div>
+
+      <div id="new_arrival" class="carousel slide" data-bs-ride="carousel">
+
+        <div class="carousel-inner">
+
+          <div class="carousel-item active">
+      <div class="new_arrival_items d-flex">
+
+        <div class="col-lg-3 d-flex align-items-center flex-column position-relative">
+          <span class="bg-primary rounded shadow text-white fw-bold dis_15"> 15% OFF</span>
+            <div class="new_arrival_img position-relative overflow-hidden ">
+              <img src="assets/img/product-5.png" alt="" class="img-fluid rounded">
+              <img src="assets/img/product-6.png" alt="" class="img-fluid rounded">
+              <div class="new_arrival_hover_items">
+                <i class="fa-regular fa-heart hvr-buzz-out"></i>
+                <a href="" class="rounded"> add to cart</a>
+                <i class="fa-regular fa-eye hvr-buzz-out"></i>
+              </div>
+             
+            </div>
+            <div class="new_arrival_content mt-4">
+              <h2 class="fs-6 text-secondary text-capitalize">micro fiber sheet</h2>
+              <span class="fw-bold fs-5"><del class="me-2">$49.99</del> $39.99</span>
+            </div>
+        </div>
+
+        <div class="col-lg-3 d-flex align-items-center flex-column">
+          <div class="new_arrival_img position-relative overflow-hidden ">
+            <img src="assets/img/product-4.png" alt="" class="img-fluid rounded ">
+            <div class="new_arrival_hover_items">
+              <i class="fa-regular fa-heart hvr-buzz-out"></i>
+              <a href="" class="rounded"> add to cart</a>
+              <i class="fa-regular fa-eye hvr-buzz-out"></i>
+            </div>
+          </div>
+          <div class="new_arrival_content mt-4">
+            <h2 class="fs-6 text-secondary text-capitalize">micro fiber sheet</h2>
+            <span class="fw-bold fs-5"><del class="me-2">$49.99</del> $39.99</span>
+          </div>
+      </div>
+
+      <div class="col-lg-3 d-flex align-items-center flex-column position-relative">
+        <span class="bg-primary rounded shadow text-white fw-bold dis_15"> 15% OFF</span>
+        <div class="new_arrival_img position-relative overflow-hidden ">
+          
+          <img src="assets/img/product-6.png" alt="" class="img-fluid rounded opacity_low opacity-50">
+          <div class="new_arrival_hover_items">
+            <i class="fa-regular fa-heart hvr-buzz-out"></i>
+            <a href="" class="rounded"> add to cart</a>
+            <i class="fa-regular fa-eye hvr-buzz-out"></i>
+          </div>
+        </div>
+        <div class="new_arrival_content mt-4">
+          <h2 class="fs-6 text-secondary text-capitalize">micro fiber sheet</h2>
+          <span class="fw-bold fs-5"><del class="me-2">$49.99</del> $39.99</span>
+        </div>
+    </div>
+
+    <div class="col-lg-3 d-flex align-items-center flex-column">
+      <div class="new_arrival_img position-relative overflow-hidden ">
+        <img src="assets/img/product-5.png" alt="" class="img-fluid rounded ">
+        <div class="new_arrival_hover_items">
+          <i class="fa-regular fa-heart hvr-buzz-out"></i>
+          <a href="" class="rounded"> add to cart</a>
+          <i class="fa-regular fa-eye hvr-buzz-out"></i>
+        </div>
+      </div>
+      <div class="new_arrival_content mt-4">
+        <h2 class="fs-6 text-secondary text-capitalize">micro fiber sheet</h2>
+        <span class="fw-bold fs-5"><del class="me-2">$49.99</del> $39.99</span>
+      </div>
+  </div>
+
+  <div class="col-lg-3 d-flex align-items-center flex-column">
+    <div class="new_arrival_img position-relative overflow-hidden ">
+      <img src="assets/img/product-1.png" alt="" class="img-fluid rounded">
+      <div class="new_arrival_hover_items">
+        <i class="fa-regular fa-heart hvr-buzz-out"></i>
+        <a href="" class="rounded"> add to cart</a>
+        <i class="fa-regular fa-eye hvr-buzz-out"></i>
+      </div>
+    </div>
+    <div class="new_arrival_content mt-4">
+      <h2 class="fs-6 text-secondary text-capitalize">micro fiber sheet</h2>
+      <span class="fw-bold fs-5"><del class="me-2">$49.99</del> $39.99</span>
+    </div>
+</div>
+
+      </div>
+    </div>
+
+<!-- another carousel -->
+
+
+<div class="carousel-item">
+
+  <div class="new_arrival_items d-flex">
+
+    <div class="col-lg-3 d-flex align-items-center flex-column">
+      <div class="new_arrival_img position-relative overflow-hidden ">
+        <img src="assets/img/product-1.png" alt="" class="img-fluid rounded">
+        <div class="new_arrival_hover_items">
+          <i class="fa-regular fa-heart hvr-buzz-out"></i>
+          <a href="" class="rounded"> add to cart</a>
+          <i class="fa-regular fa-eye hvr-buzz-out"></i>
+        </div>
+      </div>
+      <div class="new_arrival_content mt-4">
+        <h2 class="fs-6 text-secondary text-capitalize">micro fiber sheet</h2>
+        <span class="fw-bold fs-5"><del class="me-2">$49.99</del> $39.99</span>
+      </div>
+      </div>
+
+    <div class="col-lg-3 d-flex align-items-center flex-column">
+      <div class="new_arrival_img position-relative overflow-hidden ">
+        <img src="assets/img/product-4.png" alt="" class="img-fluid rounded ">
+        <div class="new_arrival_hover_items">
+          <i class="fa-regular fa-heart hvr-buzz-out"></i>
+          <a href="" class="rounded"> add to cart</a>
+          <i class="fa-regular fa-eye hvr-buzz-out"></i>
+        </div>
+      </div>
+      <div class="new_arrival_content mt-4">
+        <h2 class="fs-6 text-secondary text-capitalize">micro fiber sheet</h2>
+        <span class="fw-bold fs-5"><del class="me-2">$49.99</del> $39.99</span>
+      </div>
+  </div>
+  <div class="col-lg-3 d-flex align-items-center flex-column">
+    <div class="new_arrival_img position-relative overflow-hidden ">
+      <img src="assets/img/product-5.png" alt="" class="img-fluid rounded ">
+      <div class="new_arrival_hover_items">
+        <i class="fa-regular fa-heart hvr-buzz-out"></i>
+        <a href="" class="rounded"> add to cart</a>
+        <i class="fa-regular fa-eye hvr-buzz-out"></i>
+      </div>
+    </div>
+    <div class="new_arrival_content mt-4">
+      <h2 class="fs-6 text-secondary text-capitalize">micro fiber sheet</h2>
+      <span class="fw-bold fs-5"><del class="me-2">$49.99</del> $39.99</span>
+    </div>
+  </div>
+
+
+  <div class="col-lg-3 d-flex align-items-center flex-column position-relative">
+    <span class="bg-primary rounded shadow text-white fw-bold dis_15"> 15% OFF</span>
+    <div class="new_arrival_img position-relative overflow-hidden ">
+      
+      <img src="assets/img/product-6.png" alt="" class="img-fluid rounded opacity_low opacity-50">
+      <div class="new_arrival_hover_items">
+        <i class="fa-regular fa-heart hvr-buzz-out"></i>
+        <a href="" class="rounded"> add to cart</a>
+        <i class="fa-regular fa-eye hvr-buzz-out"></i>
+      </div>
+    </div>
+    <div class="new_arrival_content mt-4">
+      <h2 class="fs-6 text-secondary text-capitalize">micro fiber sheet</h2>
+      <span class="fw-bold fs-5"><del class="me-2">$49.99</del> $39.99</span>
+    </div>
+</div>
+
+
+<div class="col-lg-3 d-flex align-items-center flex-column position-relative">
+  <span class="bg-primary rounded shadow text-white fw-bold dis_15"> 15% OFF</span>
+    <div class="new_arrival_img position-relative overflow-hidden ">
+      <img src="assets/img/product-5.png" alt="" class="img-fluid rounded">
+      <img src="assets/img/product-6.png" alt="" class="img-fluid rounded">
+      <div class="new_arrival_hover_items">
+        <i class="fa-regular fa-heart hvr-buzz-out"></i>
+        <a href="" class="rounded"> add to cart</a>
+        <i class="fa-regular fa-eye hvr-buzz-out"></i>
+      </div>
+     
+    </div>
+    <div class="new_arrival_content mt-4">
+      <h2 class="fs-6 text-secondary text-capitalize">micro fiber sheet</h2>
+      <span class="fw-bold fs-5"><del class="me-2">$49.99</del> $39.99</span>
+    </div>
+</div>
+
+  </div>
+</div>
+  </div>
+</div>
+<hr class="mt-5">
+</div>
+</div>
+</div>
+<!-- END NEW ARRIVALS -->
+<!-- START BEST SELLERS -->
+
+<div class="best_seller_area mb-5 pb-5">
+  <div class="container">
+    <div class="row">
+
+      <div class="new_arrival_header mb-4">
+        <h3> <i class="fa-solid fa-basket-shopping"></i> This Month</h3>
+        <h2 class="fw-bold mt-3 fs-2 d-inline-block">Best Sellers</h2>
+          <div class="carosel_controls float-end d-flex ">
+            <div class="scroll_left position-relative overflow-hidden">
+              <i class="fa-solid fa-arrow-left arrow_left1" ></i>
+            </div>
+            <div class="scroll_right position-relative overflow-hidden">
+              <i class="fa-solid fa-arrow-right arrow_right1"></i>
+            </div>
+          </div>
+      </div>
+
+      <div class="best_seller_item_section d-flex slick_slider_1">
+        <div class="col-lg-3  best_seller_item position-relative">
+            <div class="best_seller_content bg-light">
+              <h2 class="fs-5">Modern Hoodie</h2>
+              <span class="fw-bold"> $39.99 <del class="ms-2"> $49.99</del> </span>
+              <p > <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i> (99)</p>
+            </div>
+            <div class="best_seller_img">
+              <img src="assets/img/product-21.png" alt="" class="img-fluid hvr-bounce-in">
+            </div>
+            <div class="bs_cart_item">
+              <i class="bi bi-cart2 rounded-5"></i>
+            </div>
+        </div>
+
+        <div class="col-lg-3  best_seller_item position-relative">
+          <div class="best_seller_content bg-light">
+            <h2 class="fs-5">Modern Hoodie</h2>
+            <span class="fw-bold"> $39.99 <del class="ms-2"> $49.99</del> </span>
+            <p > <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i> (99)</p>
+          </div>
+          <div class="best_seller_img">
+            <img src="assets/img/product-22.png" alt="" class="img-fluid hvr-bounce-in">
+          </div>
+          <div class="bs_cart_item">
+            <i class="bi bi-cart2 rounded-5"></i>
+          </div>
+      </div>
+
+      <div class="col-lg-3  best_seller_item position-relative">
+        <div class="best_seller_content bg-light">
+          <h2 class="fs-5">Modern Hoodie</h2>
+          <span class="fw-bold"> $39.99 <del class="ms-2"> $49.99</del> </span>
+          <p > <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i> (99)</p>
+        </div>
+        <div class="best_seller_img">
+          <img src="assets/img/product-23.png" alt="" class="img-fluid hvr-bounce-in">
+        </div>
+        <div class="bs_cart_item">
+          <i class="bi bi-cart2 rounded-5"></i>
+        </div>
+    </div>
+
+    <div class="col-lg-3  best_seller_item position-relative">
+      <div class="best_seller_content bg-light">
+        <h2 class="fs-5">Modern Hoodie</h2>
+        <span class="fw-bold"> $39.99 <del class="ms-2"> $49.99</del> </span>
+        <p > <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i> (99)</p>
+      </div>
+      <div class="best_seller_img">
+        <img src="assets/img/product-20.png" alt="" class="img-fluid hvr-bounce-in">
+      </div>
+      <div class="bs_cart_item">
+        <i class="bi bi-cart2 rounded-5"></i>
+      </div>
+  </div>
+
+
+  <div class="col-lg-3  best_seller_item position-relative">
+    <div class="best_seller_content bg-light">
+      <h2 class="fs-5">Modern Hoodie</h2>
+      <span class="fw-bold"> $39.99 <del class="ms-2"> $49.99</del> </span>
+      <p > <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i> (99)</p>
+    </div>
+    <div class="best_seller_img">
+      <img src="assets/img/product-21.png" alt="" class="img-fluid hvr-bounce-in">
+    </div>
+    <div class="bs_cart_item">
+      <i class="bi bi-cart2 rounded-5"></i>
+    </div>
+</div>
+
+<div class="col-lg-3  best_seller_item position-relative">
+  <div class="best_seller_content bg-light">
+    <h2 class="fs-5">Modern Hoodie</h2>
+    <span class="fw-bold"> $39.99 <del class="ms-2"> $49.99</del> </span>
+    <p > <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i> (99)</p>
+  </div>
+  <div class="best_seller_img">
+    <img src="assets/img/product-22.png" alt="" class="img-fluid hvr-bounce-in">
+  </div>
+  <div class="bs_cart_item">
+    <i class="bi bi-cart2 rounded-5"></i>
+  </div>
+</div>
+
+<div class="col-lg-3  best_seller_item position-relative">
+<div class="best_seller_content bg-light">
+  <h2 class="fs-5">Modern Hoodie</h2>
+  <span class="fw-bold"> $39.99 <del class="ms-2"> $49.99</del> </span>
+  <p > <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i> (99)</p>
+</div>
+<div class="best_seller_img">
+  <img src="assets/img/product-23.png" alt="" class="img-fluid hvr-bounce-in">
+</div>
+<div class="bs_cart_item">
+  <i class="bi bi-cart2 rounded-5"></i>
+</div>
+</div>
+
+<div class="col-lg-3  best_seller_item position-relative">
+<div class="best_seller_content bg-light">
+<h2 class="fs-5">Modern Hoodie</h2>
+<span class="fw-bold"> $39.99 <del class="ms-2"> $49.99</del> </span>
+<p > <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i> (99)</p>
+</div>
+<div class="best_seller_img">
+<img src="assets/img/product-20.png" alt="" class="img-fluid hvr-bounce-in">
+</div>
+<div class="bs_cart_item">
+<i class="bi bi-cart2 rounded-5"></i>
+</div>
+</div>
+
+
+
+      </div>
+
+
+    </div>
+  </div>
+</div>
+
+<!-- END BEST SELLERS -->
+
+<!-- START LETS SHOPPING -->
+
+<div class="lets_shopping_area mb-5 mt-5 pt-5">
+  <div class="container">
+    <div class="row">
+      <div class="lets_shopping_section p-5 bg-light position-relative">
+        <div class="count_down_content col-12">
+          <div class="new_arrival_header mb-4 mt-4">
+            <h3> <i class="fa-solid fa-basket-shopping"></i> Don’t Miss!!</h3> 
+            <h2 class="display-5 "> Let's Shopping  Today</h2> 
+              <div class="count_down_items d-flex mb-5" id="count_down1">
+                <div class="count_day">
+                  <p class="days">0 </p>
+                  <span> day</span>
+                </div>
+                <div class="count_hour">
+                  <p class="hours">0 </p>
+                  <span> hrs</span>
+                </div>
+                <div class="count_min">
+                  <p class="minutes">0 </p>
+                  <span> min</span>
+                </div>
+                <div class="count_sec">
+                  <p class="seconds">0 </p>
+                  <span> sec</span>
+                </div>
+              </div>
+            <button class="btn btn-primary btn-lg text-capitalize fs-6 fw-bold px-4 py-3 btn_res">check it out</button>
+ 
+          </div>
+        </div>
+        <div class="watch_img col-12">
+          <img src="assets/img/poster-05.png" alt="watch" class="img-fluid">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- END LETS SHOPPING -->
+
+<!-- START EXPLORE PRODUCTS -->
+<div class="explore_product_area my-5">
+  <div class="container">
+    <div class="row">
+        <div class="explore_product_top">
+          <div class="new_arrival_header mb-4">
+            <h3> <i class="fa-solid fa-basket-shopping"></i>  Our Products</h3>
+            <h2 class="fw-bold mt-3 fs-2 d-inline-block">Explore our Products</h2>
+              <div class="carosel_controls float-end d-flex ">
+                <div class="scroll_left position-relative overflow-hidden">
+                  <i class="fa-solid fa-arrow-left arrow_left2" ></i>
+                </div>
+                <div class="scroll_right position-relative overflow-hidden">
+                  <i class="fa-solid fa-arrow-right arrow_right2"></i>
+                </div>
+              </div>
+          </div>
+        </div>
+        <div class="explore_product_section slick_slider_2">
+                <div class="exp_pro_col">
+                  <div class="col-lg-3 d-flex align-items-center flex-column">
+                    <div class="new_arrival_img position-relative overflow-hidden ">
+                      <img src="assets/img/product-5.png" alt="" class="img-fluid rounded ">
+                      <div class="new_arrival_hover_items">
+                        <i class="fa-regular fa-heart hvr-buzz-out"></i>
+                        <a href="" class="rounded"> add to cart</a>
+                        <i class="fa-regular fa-eye hvr-buzz-out"></i>
+                      </div>
+                    </div>
+                    <div class="new_arrival_content mt-4">
+                      <h2 class="fs-6 text-secondary text-capitalize">micro fiber sheet</h2>
+                      <span class="fw-bold fs-5"><del class="me-2">$49.99</del> $39.99</span>
+                    </div>
+         
+
+                    <div id="img_button">
+                        <div class="btnx button_1 activex">
+                          <div class="bg_red"></div>
+                        </div>
+                        <div class="btnx button_2">
+                          <div class="bg_blue"></div>
+                        </div>
+                        <div class=" btnx button_3">
+                          <div class="bg_green"></div>
+                        </div>
+                        <div class="btnx button_4">
+                          <div class="bg_purple"></div>
+                        </div>
+                    </div>
+
+                  </div>
+
+                
+                
+                  <div class="col-lg-3 d-flex align-items-center flex-column position-relative">
+                    <span class="bg-primary rounded text-white fw-bold dis_15"> 15% OFF</span>
+                    <div class="new_arrival_img position-relative overflow-hidden ">
+                      
+                      <img src="assets/img/product-6.png" alt="" class="img-fluid rounded opacity_low opacity-50">
+                      <div class="new_arrival_hover_items">
+                        <i class="fa-regular fa-heart hvr-buzz-out"></i>
+                        <a href="" class="rounded"> add to cart</a>
+                        <i class="fa-regular fa-eye hvr-buzz-out"></i>
+                      </div>
+                    </div>
+                    <div class="new_arrival_content mt-4">
+                      <h2 class="fs-6 text-secondary text-capitalize">micro fiber sheet</h2>
+                      <span class="fw-bold fs-5"><del class="me-2">$49.99</del> $39.99</span>
+                    </div>
+                </div>
+                </div>  
+                
+
+
+                <div class="exp_pro_col">
+                  <div class="col-lg-3 d-flex align-items-center flex-column">
+                    <div class="new_arrival_img position-relative overflow-hidden ">
+                      <img src="assets/img/product-1.png" alt="" class="img-fluid rounded">
+                      <div class="new_arrival_hover_items">
+                        <i class="fa-regular fa-heart hvr-buzz-out"></i>
+                        <a href="" class="rounded"> add to cart</a>
+                        <i class="fa-regular fa-eye hvr-buzz-out"></i>
+                      </div>
+                    </div>
+                    <div class="new_arrival_content mt-4">
+                      <h2 class="fs-6 text-secondary text-capitalize">micro fiber sheet</h2>
+                      <span class="fw-bold fs-5"><del class="me-2">$49.99</del> $39.99</span>
+                    </div>
+                    <div class="mb-4"></div>
+                </div>
+                
+                  <div class="col-lg-3 d-flex align-items-center flex-column">
+                    <div class="new_arrival_img position-relative overflow-hidden ">
+                      <img src="assets/img/product-4.png" alt="" class="img-fluid rounded ">
+                      <div class="new_arrival_hover_items">
+                        <i class="fa-regular fa-heart hvr-buzz-out"></i>
+                        <a href="" class="rounded"> add to cart</a>
+                        <i class="fa-regular fa-eye hvr-buzz-out"></i>
+                      </div>
+                    </div>
+                    <div class="new_arrival_content mt-4">
+                      <h2 class="fs-6 text-secondary text-capitalize">micro fiber sheet</h2>
+                      <span class="fw-bold fs-5"><del class="me-2">$49.99</del> $39.99</span>
+                    </div>
+                </div>
+                </div> 
+
+
+                <div class="exp_pro_col">
+                  <div class="col-lg-3 d-flex align-items-center flex-column position-relative">
+                    <span class="bg-primary rounded text-white fw-bold dis_15"> 15% OFF</span>
+                      <div class="new_arrival_img position-relative overflow-hidden ">
+                        <img src="assets/img/product-5.png" alt="" class="img-fluid rounded">
+                        <img src="assets/img/product-6.png" alt="" class="img-fluid rounded">
+                        <div class="new_arrival_hover_items">
+                          <i class="fa-regular fa-heart hvr-buzz-out"></i>
+                          <a href="" class="rounded"> add to cart</a>
+                          <i class="fa-regular fa-eye hvr-buzz-out"></i>
+                        </div>
+                       
+                      </div>
+                      <div class="new_arrival_content mt-4">
+                        <h2 class="fs-6 text-secondary text-capitalize">micro fiber sheet</h2>
+                        <span class="fw-bold fs-5"><del class="me-2">$49.99</del> $39.99</span>
+                      </div>
+                      <div id="img_button5">
+                        <div class="btnx button_1 activex">
+                          <div class="bg_red"></div>
+                        </div>
+                        <div class="btnx button_2">
+                          <div class="bg_blue"></div>
+                        </div>
+                        <div class=" btnx button_3">
+                          <div class="bg_green"></div>
+                        </div>
+                        <div class="btnx button_4">
+                          <div class="bg_purple"></div>
+                        </div>
+                    </div>
+                  </div>
+                
+                  <div class="col-lg-3 d-flex align-items-center flex-column">
+                    <div class="new_arrival_img position-relative overflow-hidden ">
+                      <img src="assets/img/product-1.png" alt="" class="img-fluid rounded ">
+                      <div class="new_arrival_hover_items">
+                        <i class="fa-regular fa-heart hvr-buzz-out"></i>
+                        <a href="" class="rounded"> add to cart</a>
+                        <i class="fa-regular fa-eye hvr-buzz-out"></i>
+                      </div>
+                    </div>
+                    <div class="new_arrival_content mt-4">
+                      <h2 class="fs-6 text-secondary text-capitalize">micro fiber sheet</h2>
+                      <span class="fw-bold fs-5"><del class="me-2">$49.99</del> $39.99</span>
+                    </div>
+                </div>
+                </div> 
+
+
+
+                <div class="exp_pro_col">
+                  <div class="col-lg-3 d-flex align-items-center flex-column position-relative">
+                    <span class="bg-primary rounded text-white fw-bold dis_15"> 15% OFF</span>
+                      <div class="new_arrival_img position-relative overflow-hidden ">
+                        <img src="assets/img/product-5.png" alt="" class="img-fluid rounded">
+                        <img src="assets/img/product-6.png" alt="" class="img-fluid rounded">
+                        <div class="new_arrival_hover_items">
+                          <i class="fa-regular fa-heart hvr-buzz-out"></i>
+                          <a href="" class="rounded"> add to cart</a>
+                          <i class="fa-regular fa-eye hvr-buzz-out"></i>
+                        </div>
+                       
+                      </div>
+                      <div class="new_arrival_content mt-4">
+                        <h2 class="fs-6 text-secondary text-capitalize">micro fiber sheet</h2>
+                        <span class="fw-bold fs-5"><del class="me-2">$49.99</del> $39.99</span>
+                      </div>
+                      <div class="mb-4"></div>
+                      
+                  </div>
+                
+                  <div class="col-lg-3 d-flex align-items-center flex-column">
+                    <div class="new_arrival_img position-relative overflow-hidden ">
+                      <img src="assets/img/product-4.png" alt="" class="img-fluid rounded ">
+                      <div class="new_arrival_hover_items">
+                        <i class="fa-regular fa-heart hvr-buzz-out"></i>
+                        <a href="" class="rounded"> add to cart</a>
+                        <i class="fa-regular fa-eye hvr-buzz-out"></i>
+                      </div>
+                    </div>
+                    <div class="new_arrival_content mt-4">
+                      <h2 class="fs-6 text-secondary text-capitalize">micro fiber sheet</h2>
+                      <span class="fw-bold fs-5"><del class="me-2">$49.99</del> $39.99</span>
+                    </div>
+                    
+                    <div id="img_button4">
+                      <div class="btnx button_1 activex">
+                        <div class="bg_red"></div>
+                      </div>
+                      <div class="btnx button_2">
+                        <div class="bg_blue"></div>
+                      </div>
+                      <div class=" btnx button_3">
+                        <div class="bg_green"></div>
+                      </div>
+                      <div class="btnx button_4">
+                        <div class="bg_purple"></div>
+                      </div>
+                  </div>
+                </div>
+                </div> 
+
+
+                <div class="exp_pro_col">
+                  <div class="col-lg-3 d-flex align-items-center flex-column position-relative">
+                    <span class="bg-primary rounded text-white fw-bold dis_15"> 15% OFF</span>
+                      <div class="new_arrival_img position-relative overflow-hidden ">
+                        <img src="assets/img/product-5.png" alt="" class="img-fluid rounded">
+                        <img src="assets/img/product-6.png" alt="" class="img-fluid rounded">
+                        <div class="new_arrival_hover_items">
+                          <i class="fa-regular fa-heart hvr-buzz-out"></i>
+                          <a href="" class="rounded"> add to cart</a>
+                          <i class="fa-regular fa-eye hvr-buzz-out"></i>
+                        </div>
+                       
+                      </div>
+                      <div class="new_arrival_content mt-4">
+                        <h2 class="fs-6 text-secondary text-capitalize">micro fiber sheet</h2>
+                        <span class="fw-bold fs-5"><del class="me-2">$49.99</del> $39.99</span>
+                      </div>
+                      <div class="mb-4"></div>
+                  </div>
+                
+                  <div class="col-lg-3 d-flex align-items-center flex-column">
+                    <div class="new_arrival_img position-relative overflow-hidden ">
+                      <img src="assets/img/product-1.png" alt="" class="img-fluid rounded">
+                      <div class="new_arrival_hover_items">
+                        <i class="fa-regular fa-heart hvr-buzz-out"></i>
+                        <a href="" class="rounded"> add to cart</a>
+                        <i class="fa-regular fa-eye hvr-buzz-out"></i>
+                      </div>
+                    </div>
+                    <div class="new_arrival_content mt-4">
+                      <h2 class="fs-6 text-secondary text-capitalize">micro fiber sheet</h2>
+                      <span class="fw-bold fs-5"><del class="me-2">$49.99</del> $39.99</span>
+                    </div>
+                </div>
+                </div>       
+
+
+                <div class="exp_pro_col">
+                  <div class="col-lg-3 d-flex align-items-center flex-column position-relative">
+                    <span class="bg-primary rounded text-white fw-bold dis_15"> 15% OFF</span>
+                      <div class="new_arrival_img position-relative overflow-hidden ">
+                        <img src="assets/img/product-5.png" alt="" class="img-fluid rounded">
+                        <img src="assets/img/product-6.png" alt="" class="img-fluid rounded">
+                        <div class="new_arrival_hover_items">
+                          <i class="fa-regular fa-heart hvr-buzz-out"></i>
+                          <a href="" class="rounded"> add to cart</a>
+                          <i class="fa-regular fa-eye hvr-buzz-out"></i>
+                        </div>
+                       
+                      </div>
+                      <div class="new_arrival_content mt-4">
+                        <h2 class="fs-6 text-secondary text-capitalize">micro fiber sheet</h2>
+                        <span class="fw-bold fs-5"><del class="me-2">$49.99</del> $39.99</span>
+                      </div>
+                      <div class="mb-4"></div>
+                  </div>
+                
+                  <div class="col-lg-3 d-flex align-items-center flex-column">
+                    <div class="new_arrival_img position-relative overflow-hidden ">
+                      <img src="assets/img/product-1.png" alt="" class="img-fluid rounded ">
+                      <div class="new_arrival_hover_items">
+                        <i class="fa-regular fa-heart hvr-buzz-out"></i>
+                        <a href="" class="rounded"> add to cart</a>
+                        <i class="fa-regular fa-eye hvr-buzz-out"></i>
+                      </div>
+                    </div>
+                    <div class="new_arrival_content mt-4">
+                      <h2 class="fs-6 text-secondary text-capitalize">micro fiber sheet</h2>
+                      <span class="fw-bold fs-5"><del class="me-2">$49.99</del> $39.99</span>
+                    </div>
+                </div>
+                </div>       
+
+
+
+                <div class="exp_pro_col">
+                  <div class="col-lg-3 d-flex align-items-center flex-column position-relative">
+                    <span class="bg-primary rounded text-white fw-bold dis_15"> 15% OFF</span>
+                      <div class="new_arrival_img position-relative overflow-hidden ">
+                        <img src="assets/img/product-5.png" alt="" class="img-fluid rounded">
+                        <img src="assets/img/product-6.png" alt="" class="img-fluid rounded">
+                        <div class="new_arrival_hover_items">
+                          <i class="fa-regular fa-heart hvr-buzz-out"></i>
+                          <a href="" class="rounded"> add to cart</a>
+                          <i class="fa-regular fa-eye hvr-buzz-out"></i>
+                        </div>
+                       
+                      </div>
+                      <div class="new_arrival_content mt-4">
+                        <h2 class="fs-6 text-secondary text-capitalize">micro fiber sheet</h2>
+                        <span class="fw-bold fs-5"><del class="me-2">$49.99</del> $39.99</span>
+                      </div>
+                      <div class="mb-4"></div>
+                  </div>
+                
+                  <div class="col-lg-3 d-flex align-items-center flex-column">
+                    <div class="new_arrival_img position-relative overflow-hidden ">
+                      <img src="assets/img/product-4.png" alt="" class="img-fluid rounded ">
+                      <div class="new_arrival_hover_items">
+                        <i class="fa-regular fa-heart hvr-buzz-out"></i>
+                        <a href="" class="rounded"> add to cart</a>
+                        <i class="fa-regular fa-eye hvr-buzz-out"></i>
+                      </div>
+                    </div>
+                    <div class="new_arrival_content mt-4">
+                      <h2 class="fs-6 text-secondary text-capitalize">micro fiber sheet</h2>
+                      <span class="fw-bold fs-5"><del class="me-2">$49.99</del> $39.99</span>
+                    </div>
+                </div>
+                </div>       
+
+
+
+
+                <div class="exp_pro_col">
+                  <div class="col-lg-3 d-flex align-items-center flex-column position-relative">
+                    <span class="bg-primary rounded text-white fw-bold dis_15"> 15% OFF</span>
+                      <div class="new_arrival_img position-relative overflow-hidden ">
+                        <img src="assets/img/product-5.png" alt="" class="img-fluid rounded">
+                        <img src="assets/img/product-6.png" alt="" class="img-fluid rounded">
+                        <div class="new_arrival_hover_items">
+                          <i class="fa-regular fa-heart hvr-buzz-out"></i>
+                          <a href="" class="rounded"> add to cart</a>
+                          <i class="fa-regular fa-eye hvr-buzz-out"></i>
+                        </div>
+                       
+                      </div>
+                      <div class="new_arrival_content mt-4">
+                        <h2 class="fs-6 text-secondary text-capitalize">micro fiber sheet</h2>
+                        <span class="fw-bold fs-5"><del class="me-2">$49.99</del> $39.99</span>
+                      </div>
+                      <div class="mb-4"></div>
+                  </div>
+                
+                  <div class="col-lg-3 d-flex align-items-center flex-column">
+                    <div class="new_arrival_img position-relative overflow-hidden ">
+                      <img src="assets/img/product-4.png" alt="" class="img-fluid rounded ">
+                      <div class="new_arrival_hover_items">
+                        <i class="fa-regular fa-heart hvr-buzz-out"></i>
+                        <a href="" class="rounded"> add to cart</a>
+                        <i class="fa-regular fa-eye hvr-buzz-out"></i>
+                      </div>
+                    </div>
+                    <div class="new_arrival_content mt-4">
+                      <h2 class="fs-6 text-secondary text-capitalize">micro fiber sheet</h2>
+                      <span class="fw-bold fs-5"><del class="me-2">$49.99</del> $39.99</span>
+                    </div>
+                </div>
+                </div>       
+
+
+
+
+
+        </div>  
+          <div>
+            <button class="btn btn-light btn-lg text-capitalize d-block m-auto px-5 py-3 text-muted fw-semibold"> view all products</button>
+          </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- END EXPLORE PRODUCTS -->
+
+<!-- START FEEDBACK -->
+
+<div class="feedback_area my-5 pb-5">
+  <div class="container">
+    <div class="row">
+      <div class="explore_product_top mt-5 pt-5">
+        <div class="new_arrival_header mb-4">
+          <h3> <i class="fa-solid fa-basket-shopping"></i>  Testimonials</h3>
+          <h2 class="fw-bold mt-3 fs-2 d-inline-block">Users Feedback</h2>
+            <div class="carosel_controls float-end d-flex ">
+              <div class="scroll_left position-relative overflow-hidden bg-black">
+                <i class="fa-solid fa-arrow-left arrow_left text-white" ></i>
+              </div>
+              <div class="scroll_right position-relative overflow-hidden bg-black">
+                <i class="fa-solid fa-arrow-right arrow_right text-white"></i>
+              </div>
+            </div>
+        </div>
+      </div>
+
+      <div class="feedback_items_section d-flex slick_slider_3">
+        <div class="col-lg-4 pb-5">
+          <div class="feedback_item ">
+            <div class="feedback_content p-5 bg-white rounded-3 mb-5 position-relative shadow">
+              <p class="text-secondary">“ It’s amazing how much easier it has been to
+                meet new people and create instantly non
+                connections. I have the exact same personal
+                the only thing that has changed is my mind
+                set and a few behaviors. “</p>
+            </div>
+            <div class="feedback_img float-start">
+              <img src="assets/img/image-1.png" alt="">
+            </div>
+            <div class="feedback_img_content float-start ms-4">
+              <p class="text-muted mb-1">Head Of Idea</p>
+              <h3 class="fs-5">James C. Anderson</h3>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="col-lg-4 pb-5">
+          <div class="feedback_item ">
+            <div class="feedback_content p-5 bg-white rounded-3 mb-5 position-relative shadow">
+              <p class="text-secondary">“ It’s amazing how much easier it has been to
+                meet new people and create instantly non
+                connections. I have the exact same personal
+                the only thing that has changed is my mind
+                set and a few behaviors. “</p>
+            </div>
+            <div class="feedback_img float-start">
+              <img src="assets/img/image-2.png" alt="">
+            </div>
+            <div class="feedback_img_content float-start ms-4">
+              <p class="text-muted mb-1">Head Of Idea</p>
+              <h3 class="fs-5">James C. Anderson</h3>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="col-lg-4 pb-5">
+          <div class="feedback_item ">
+            <div class="feedback_content p-5 bg-white rounded-3 mb-5 position-relative shadow">
+              <p class="text-secondary">“ It’s amazing how much easier it has been to
+                meet new people and create instantly non
+                connections. I have the exact same personal
+                the only thing that has changed is my mind
+                set and a few behaviors. “</p>
+            </div>
+            <div class="feedback_img float-start">
+              <img src="assets/img/image-3.png" alt="">
+            </div>
+            <div class="feedback_img_content float-start ms-4">
+              <p class="text-muted mb-1">Head Of Idea</p>
+              <h3 class="fs-5">James C. Anderson</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4 pb-5">
+          <div class="feedback_item ">
+            <div class="feedback_content p-5 bg-white rounded-3 mb-5 position-relative shadow">
+              <p class="text-secondary">“ It’s amazing how much easier it has been to
+                meet new people and create instantly non
+                connections. I have the exact same personal
+                the only thing that has changed is my mind
+                set and a few behaviors. “</p>
+            </div>
+            <div class="feedback_img float-start">
+              <img src="assets/img/image-1.png" alt="">
+            </div>
+            <div class="feedback_img_content float-start ms-4">
+              <p class="text-muted mb-1">Head Of Idea</p>
+              <h3 class="fs-5">James C. Anderson</h3>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+
+    </div>
+  </div>
+</div>
+<!-- END FEEDBACK -->
+
+<!-- START NEWSLETTER  -->
+
+
+<div class="newsletter_area mb-5">
+  <div class="container">
+    <div class="row">
+        <div class="newsletter_section p-5">
+          <div class="newsletter_content p-5 ">
+            <div class="new_arrival_header mb-4">
+              <h3> <i class="fa-solid fa-basket-shopping"></i>  Newsletter</h3>
+              <h2 class="fw-bold mt-3 fs-2 d-inline-block">Get weekly update</h2>   
+            </div>
+
+            <div class="form_section">
+                <div class="form_input">
+                 
+                  <form class="row g-3 needs-validation d-flex position-relative" novalidate>
+                      <div class="form_input_wrap col-lg-4 col-12 col-md-8 has-validation">
+                        <i class="fa-solid fa-envelope fa-lg mt-2"></i>
+                        <input type="email" placeholder="example@gmail.com" class="form-control" id="validationCustom02" required>  
+                        
+                        <div class="valid-feedback pos_a">
+                          Looks good!
+                        </div>
+  
+                        <div class="invalid-feedback pos_a">
+                          Enter a valid email address.
+                        </div>
+                      </div>
+
+                
+
+                     <div class="button_wrap col-lg-1">
+                      <button class="btn btn-dark text-white py-3 px-4 ms-2 fw-bold btn_res"  > Subscribe </button>
+                     </div>
+ 
+                  </form>
+
+                  
+                </div>
+            </div>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+
+<!-- END NEWSLETTER  -->
+
+<!-- START NEWSLETTER BOTTOM -->
+
+<div class="newsletter_bottom mt-5 pt-3 mb-5">
+  <div class="container">
+    <div class="row">
+     
+        <div class="footer_features d-flex col-lg-3 col-sm-5 col-md-4">
+          <div class="footer_features_img ">
+            <img src="assets/img/service1.png" alt="" class="img-fluid">
+          </div>
+          <div class="footer_features_text">
+            <h2 class="fs-6">Fast & Secure Delivery</h2>
+            <h3 class="text-muted">Tell about your service.</h3>
+          </div>
+        </div>
+
+
+
+        <div class="footer_features d-flex col-lg-3 col-sm-5 col-md-4">
+          <div class="footer_features_img ">
+            <img src="assets/img/service4.png" alt="" class="img-fluid">
+          </div>
+          <div class="footer_features_text">
+            <h2 class="fs-6">Fast & Secure Delivery</h2>
+            <h3 class="text-muted">Tell about your service.</h3>
+          </div>
+        </div>
+
+        <div class="footer_features d-flex col-lg-3 col-sm-5 col-md-4">
+          <div class="footer_features_img ">
+            <img src="assets/img/service2.png" alt="" class="img-fluid">
+          </div>
+          <div class="footer_features_text">
+            <h2 class="fs-6">Fast & Secure Delivery</h2>
+            <h3 class="text-muted">Tell about your service.</h3>
+          </div>
+        </div>
+
+
+        <div class="footer_features d-flex col-lg-3 col-sm-5 col-md-4">
+          <div class="footer_features_img ">
+            <img src="assets/img/service3.png" alt="" class="img-fluid">
+          </div>
+          <div class="footer_features_text">
+            <h2 class="fs-6">Fast & Secure Delivery</h2>
+            <h3 class="text-muted">Tell about your service.</h3>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- END  NEWSLETTER BOTTOM -->
+
+<!-- START FOOTER AREA -->
+<div class="footer_area pb-5">
+  <div class="container">
+
+    <div class="row">
+      <hr class="mb-5">
+        <div class="col-lg-3 col-sm-6 col-md-4 footer_item">
+          <address>
+            <h2>Support</h2>
+           <p>685 Market Street, <br>
+            Las Vegas, LA 95820, <br>
+            United States</p>
+            <a href="" class="text-lowercase my-3 d-inline-block"> <i class="fa-solid fa-envelope "></i> example@domain.com</a>
+            <h3> <i class="fa-solid fa-phone"></i> (+01) 850-315-5862</h3>
+          </address>
+        </div>
+        <div class="col-lg-3 col-sm-6 col-md-4 d-flex flex-column footer_item">
+          <h2>Account</h2>
+          <a href="">My Account</a>
+          <a href="">Login / Register</a>
+          <a href="">Wishlist</a>
+          <a href="">Privacy Policy</a>
+        </div>
+        <div class="col-lg-3 col-sm-6 col-md-4 d-flex flex-column footer_item">
+          <h2>Quick Link</h2>
+          <a href="">Login / Register</a>
+          <a href="">My Account</a>
+          <a href="">Wishlist</a>
+          <a href="">Privacy Policy</a>
+        </div>
+        <div class="col-lg-3 col-sm-6 col-md-6  footer_item ">
+          <h2>Download App</h2>
+          <h3 class="mb-3"> Save $3 With App & New User only </h3>
+          <div class="footer_img_left float-start">
+            <img src="assets/img/qr.png" alt="">
+          </div>
+          <div class="footer_img_right float-start d-flex flex-column ms-4">
+            <img src="assets/img/app-store.png" alt="" class="mb-4">
+            <img src="assets/img/play-store.png" alt="">
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- END FOOTER AREA -->
+
+<!-- START FOOTER BOTTOM -->
+
+<div class="footer_bottom_area my-3 ">
+  <div class="container">
+    <div class="row">
+      <hr >
+      <div class="footer_bottom_section d-flex justify-content-between ">
+        <div class="social_icons col-lg-3 col-md-6 footer_bottom_item">
+          <i class="fa-brands fa-facebook-f"></i>
+          <i class="fa-brands fa-instagram"></i>
+          <i class="fa-brands fa-twitter"></i>
+          <i class="fa-brands fa-linkedin-in"></i>
+          <i class="fa-brands fa-discord"></i>
+          
+        </div>
+        <h2 class="fs-6 mt-2 col-lg-3 col-md-6 footer_bottom_item">
+  
+          © 2023. All rights reserved by Axilthemes.
+      
+      </h2>
+        <div class="payment_methods d-flex col-lg-3 col-md-4 d-flex justify-content-end ">
+          <h2 class="fs-6 me-3 mt-1">Accept For</h2>
+          <img src="assets/img/payment_methods.png" alt="" class="img-fluid">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- END FOOTER BOTTOM -->
+
+
+
+
+
+
+
+    <!-- scripts  -->
+    <script src="https://code.jquery.com/jquery-3.6.1.js"></script>
+    <script src="assets/js/jquery.countdown.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
+    <script src="assets/js/main.js"></script>
+  </body>
+</html>
