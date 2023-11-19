@@ -1,4 +1,11 @@
-Run every test in a fork to avoid global pollution and get clean results printed per test.
+Run every test in a fork.
+
+- avoid global pollution
+- avoid "test does not work when run alone"
+- get clean results printed per test
+- get code coverage for a single test file
+- parallel execution without pollution
+
 Forks are fast because they preload the test_helper + all activerecord fixtures.
 
 
@@ -40,7 +47,7 @@ test/simple_test.rb: OK
 9 assertions, 0 errors, 0 failures, 0 skips, 8 tests
 ```
 
-### Run single files
+### Run files
 
 ```
 forking-test-runner test/models/user_test.rb test/models/order_test.rb
@@ -58,13 +65,15 @@ forking-test-runner test/ --parallel 4
 
 ### Parallel execution on CI
 
-20 Parallel workers that each test 1 chunk of tests
+Make CI have 20 Parallel workers that each test 1 group of tests, each worker runs a hardcoded group:
 
 ```
 forking-test-runner test/ --group 1 --groups 20
 ```
 
-### Executing multiple groups
+### Executing multiple test groups
+
+Helps with balancing when 1 group is slower than the others.
 
 ```
 forking-test-runner test/ --group 1,2,3,4 --groups 20
@@ -79,9 +88,11 @@ Record test runtime (on your CI, see other modes below)
 forking-test-runner test/ --group 1 --groups 20 --record-runtime amend
 ```
 
-Then download the runtime info + commit it to your repo + run with runtime
+Will generate a download url, download the runtime info and commit it to your repo, and then run with runtime
 
 ```
+wget -o test/files/runtime.log <url>
+git add test/files/runtime.log
 forking-test-runner test/ --group 1 --groups 20 --runtime-log test/files/runtime.log
 ```
 
@@ -123,6 +134,7 @@ forking-test-runner folder [options]
 
  * Travis CI (TRAVIS_REPO_SLUG, TRAVIS_BUILD_NUMBER)
  * Buildkite (BUILDKITE_ORGANIZATION_SLUG, BUILDKITE_PIPELINE_SLUG, BUILDKITE_JOB_ID)
+ * TODO: github action
 
 ### Log aggregation
 
@@ -135,7 +147,7 @@ Development
 
  - `bundle exec rake` run tests
  - `BUNDLE_GEMFILE=gemfiles/60.gemfile bundle exec rake` run tests on specific gemfile
- - `bundle exec rake bundle_all` to update all Gemfiles (prefer ruby 2.5)
+ - `bundle exec rake bundle_all` to update all Gemfiles (run on ruby 2.7 for best results)
 
 
 Authors
