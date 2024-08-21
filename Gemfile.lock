@@ -72,11 +72,12 @@ GEM
     unicode-display_width (2.5.0)
 
 PLATFORMS
-  ruby
+  arm64-darwin-23
 
 DEPENDENCIES
   activerecord
   bump
+  bundler (~> 2.3, >= 2.3.27)
   forking_test_runner!
   minitest
   rake
@@ -85,4 +86,4 @@ DEPENDENCIES
   sqlite3 (~> 1.6.0)
 
 BUNDLED WITH
-   2.3.12
+   2.3.27

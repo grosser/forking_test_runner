@@ -269,7 +269,7 @@ module ForkingTestRunner
 
       wpipe.close
 
-      buffer = ""
+      buffer = +""
 
       while ch = rpipe.read(1)
         buffer << ch

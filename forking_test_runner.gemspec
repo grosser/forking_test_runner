@@ -9,6 +9,7 @@ Gem::Specification.new name, ForkingTestRunner::VERSION do |s|
   s.files = `git ls-files lib/ bin/ MIT-LICENSE`.split("\n")
   s.add_dependency "parallel_tests", ">= 1.3.7"
   s.add_development_dependency "bump"
+  s.add_development_dependency "bundler", '~> 2.3', '>= 2.3.27' # for ruby 2.7 support
   s.add_development_dependency "minitest"
   s.add_development_dependency "rake"
   s.add_development_dependency "rspec"
