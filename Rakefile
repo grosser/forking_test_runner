@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 require "bundler/setup"
 require "bundler/gem_tasks"
+
 require "bump/tasks"
+Bump.replace_in_default = Dir["gemfiles/*.lock"]
 
 # update readme before new change is committed
 class << Bump::Bump
