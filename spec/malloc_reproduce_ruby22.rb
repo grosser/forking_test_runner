@@ -11,8 +11,10 @@ ActiveRecord::Base.establish_connection(
 
 Coverage.result
 
-Process.wait(fork do
-  Coverage.start
-  ActiveRecord::Base.connection.execute('select 1')
-  puts Coverage.result
-end)
+Process.wait(
+  fork do
+    Coverage.start
+    ActiveRecord::Base.connection.execute('select 1')
+    puts Coverage.result
+  end
+)

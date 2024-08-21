@@ -1,7 +1,7 @@
 require 'bundler/setup'
 require 'active_record'
 
-$LOAD_PATH << File.expand_path('../lib', __FILE__)
+$LOAD_PATH << File.expand_path('lib', __dir__)
 
 ENV["RAILS_ENV"] = "test"
 
@@ -13,7 +13,7 @@ configurations = {
   }
 }
 ActiveRecord::Base.configurations =
-  (ActiveRecord::VERSION::STRING >= "5.1.0" ? {"test" => configurations} : configurations)
+  (ActiveRecord::VERSION::STRING >= "5.1.0" ? { "test" => configurations } : configurations)
 
 key = (ActiveRecord::VERSION::STRING >= "4.1.0" ? :test : "test")
 ActiveRecord::Base.establish_connection key
@@ -34,7 +34,7 @@ autoload :User, 'user'
 
 require 'active_record/fixtures'
 
-ActiveSupport::TestCase.send(:include, ActiveRecord::TestFixtures)
+ActiveSupport::TestCase.include ActiveRecord::TestFixtures
 
 # have to tell AS where to find fixtures or it looks into the the root directory ...
-ActiveSupport::TestCase.fixture_path = File.expand_path("../fixtures", __FILE__)
+ActiveSupport::TestCase.fixture_path = File.expand_path('fixtures', __dir__)

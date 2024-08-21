@@ -7,11 +7,10 @@ require 'parallel'
 require 'tempfile'
 
 module ForkingTestRunner
-  CLEAR = "------"
-  CONVERAGE_REPORT_PREFIX = "coverage/fork-"
+  CLEAR = "------".freeze
+  CONVERAGE_REPORT_PREFIX = "coverage/fork-".freeze
 
   class << self
-
     attr_accessor :before_fork_callbacks, :after_fork_callbacks
 
     def cli(argv)
@@ -42,19 +41,19 @@ module ForkingTestRunner
 
       # run all the tests
       results = with_lock do |lock|
-        Parallel.map_with_index(test_groups, in_processes: parallel || 0) do |tests, env_index|
+        Parallel.map_with_index(test_groups, in_processes: parallel || 0) do |tests_group, env_index|
           if parallel
             ENV["TEST_ENV_NUMBER"] = (env_index == 0 ? '' : (env_index + 1).to_s) # NOTE: does not support first_is_1 option
           end
 
           reraise_clean_ar_error { load_test_env }
 
-          tests.map do |file, expected|
+          tests_group.map do |file, expected|
             print_started file unless parallel
             result = [file, expected, *benchmark { run_test(file) }]
             sync_stdout lock do
               print_started file if parallel
-              print_finished *result
+              print_finished(*result)
             end
             result
           end
@@ -64,9 +63,11 @@ module ForkingTestRunner
       unless @options.fetch(:quiet)
         # pretty print the results
         puts "\nResults:"
-        puts results.
-          sort_by { |_,_,_,r,_| r ? 0 : 1 }. # failures should be last so they are easy to find
-          map { |f,_,_,r,_| "#{f}: #{r ? "OK" : "Fail"}"}
+        puts(
+          results
+                    .sort_by { |_, _, _, r, _| r ? 0 : 1 } # failures should be last so they are easy to find
+                    .map { |f, _, _, r, _| "#{f}: #{r ? "OK" : "Fail"}" }
+        )
         puts
       end
 
@@ -96,7 +97,7 @@ module ForkingTestRunner
 
     def with_lock(&block)
       return yield unless @options.fetch(:parallel)
-      Tempfile.open"forking-test-runner-lock", &block
+      Tempfile.open "forking-test-runner-lock", &block
     end
 
     def sync_stdout(lock)
@@ -161,7 +162,7 @@ module ForkingTestRunner
         File.write(log, data)
       when 'amend'
         if id = ENV["BUILDKITE_JOB_ID"]
-          slug = ENV.fetch("BUILDKITE_ORG_SLUG") + "-" + ENV.fetch("BUILDKITE_PIPELINE_SLUG")
+          slug = "#{ENV.fetch("BUILDKITE_ORG_SLUG")}-#{ENV.fetch("BUILDKITE_PIPELINE_SLUG")}"
         else
           slug = ENV.fetch("TRAVIS_REPO_SLUG").sub("/", "-")
           id = ENV.fetch("TRAVIS_BUILD_NUMBER")
@@ -212,7 +213,7 @@ module ForkingTestRunner
       e = begin
         yield
         nil
-      rescue
+      rescue StandardError
         $!
       end
 
@@ -223,7 +224,7 @@ module ForkingTestRunner
     def load_test_helper
       disable_test_autorun
       require 'rspec/core' if @options.fetch(:rspec)
-      helper =  @options.fetch(:helper) || (@options.fetch(:rspec) ? "spec/spec_helper" : "test/test_helper")
+      helper = @options.fetch(:helper) || (@options.fetch(:rspec) ? "spec/spec_helper" : "test/test_helper")
       require "./#{helper}"
     end
 
@@ -283,7 +284,11 @@ module ForkingTestRunner
     def preserve_tty
       was_tty = $stdout.tty?
       yield
-      def $stdout.tty?; true; end if was_tty
+      if was_tty
+        def $stdout.tty?;
+          true;
+        end
+      end
     end
 
     def run_test(file)
@@ -317,7 +322,8 @@ module ForkingTestRunner
     def change_program_name_to(name)
       return yield if @options.fetch(:parallel)
       begin
-        old, $0 = $0, name
+        old = $0
+        $0 = name
         yield
       ensure
         $0 = old
@@ -338,7 +344,7 @@ module ForkingTestRunner
       group = groups[group - 1] || raise("Group #{group} not found")
 
       # return tests with runtime
-      tests = Hash[tests]
+      tests = tests.to_h
       group.map { |test| [test, (tests[test] if group_by == :runtime)] }
     end
 
@@ -354,7 +360,7 @@ module ForkingTestRunner
       end
     end
 
-    def toggle_test_autorun(value, file=nil)
+    def toggle_test_autorun(value, file = nil)
       if @options.fetch(:rspec)
         if value
           exit(RSpec::Core::Runner.run([file] + ARGV))
@@ -391,7 +397,7 @@ module ForkingTestRunner
         File.unlink(report) # do not leave junk behind
       end
 
-      data = JSON.pretty_generate(key => {"coverage" => coverage, "timestamp" => Time.now.to_i })
+      data = JSON.pretty_generate(key => { "coverage" => coverage, "timestamp" => Time.now.to_i })
       File.write(SingleCov.coverage_report, data)
 
       # make it not override our report when it finishes for main process

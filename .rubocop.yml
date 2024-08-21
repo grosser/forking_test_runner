@@ -1,5 +1,3 @@
-inherit_from: .rubocop_todo.yml
-
 AllCops:
   NewCops: enable
   TargetRubyVersion: 2.7 # match gemspec and .github
@@ -137,3 +135,15 @@ Lint/EmptyClass:
 # ENV.fetch('FOO', nil) is the same as ENV['FOO']
 Style/FetchEnvVar:
   Enabled: false
+
+# we need gemspec to share dependencies atm
+Gemspec/DevelopmentDependencies:
+  Enabled: false
+
+Style/GlobalVars:
+  Exclude:
+    - "spec/**/*"
+
+Lint/EmptyFile:
+  Exclude:
+  - "spec/dummy/lib/test_lib.rb"

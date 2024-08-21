@@ -7,8 +7,7 @@ module ForkingTestRunner
     end
 
     # deprecated, single_cov checks for this, so leave it here
-    def capture_coverage!
-    end
+    def capture_coverage!; end
 
     class << self
       attr_accessor :coverage
@@ -49,7 +48,7 @@ module ForkingTestRunner
       def merge_lines_coverage(a, b)
         b.each_with_index.map do |b_count, i|
           a_count = a[i]
-          (a_count.nil? && b_count.nil?) ? nil : a_count.to_i + b_count.to_i
+          a_count.nil? && b_count.nil? ? nil : a_count.to_i + b_count.to_i
         end
       end
 
