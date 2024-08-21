@@ -20,7 +20,7 @@ class << Bump::Bump
 end
 
 desc "Run tests"
-task default: :spec
+task default: [:spec, :rubocop]
 
 desc "Run tests"
 task :spec do
@@ -30,6 +30,11 @@ task :spec do
   else
     Bundler.with_original_env { sh cmd }
   end
+end
+
+desc "Rubocop"
+task :rubocop do
+  sh "rubocop --parallel"
 end
 
 desc "Bundle all gemfiles"
