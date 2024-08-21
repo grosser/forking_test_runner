@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require "bundler/setup"
 require "forking_test_runner/version"
 require "forking_test_runner"

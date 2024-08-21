@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module ForkingTestRunner
   # read and delete options we support and pass the rest through to the underlying test runner (-v / --seed etc)
   module CLI
@@ -11,9 +12,9 @@ module ForkingTestRunner
       [
         :record_runtime,
         "--record-runtime=MODE",
-        "\n      Record test runtime:\n" <<
-          "        simple = write to disk at --runtime-log)\n" <<
-          "        amend  = write from multiple remote workers via http://github.com/grosser/amend, needs TRAVIS_REPO_SLUG & TRAVIS_BUILD_NUMBER",
+        "\n      Record test runtime:\n        " \
+        "simple = write to disk at --runtime-log)\n        " \
+        "amend  = write from multiple remote workers via http://github.com/grosser/amend, needs TRAVIS_REPO_SLUG & TRAVIS_BUILD_NUMBER",
         String
       ],
       [:runtime_log, "--runtime-log=FILE", "File to store runtime log in or runtime.log", String],
@@ -22,7 +23,7 @@ module ForkingTestRunner
       [:groups, "--groups=NUM", "How many groups there are in total (use with --group)", Integer],
       [:version, "--version", "Show version"],
       [:help, "--help", "Show help"]
-    ]
+    ].freeze
 
     class << self
       def parse_options(argv)
@@ -43,8 +44,8 @@ module ForkingTestRunner
         end
 
         # check if we can use merge_coverage
-        if options.fetch(:merge_coverage)
-          abort "merge_coverage does not work on ruby prior to 2.3" if RUBY_VERSION < "2.3.0"
+        if options.fetch(:merge_coverage) && "2.3.0" > RUBY_VERSION
+          abort "merge_coverage does not work on ruby prior to 2.3"
         end
 
         if !!options.fetch(:group) ^ !!options.fetch(:groups)

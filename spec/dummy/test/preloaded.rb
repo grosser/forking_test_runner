@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class PreloadedCoverage
   def self.generate_coverage_before_fork
     1

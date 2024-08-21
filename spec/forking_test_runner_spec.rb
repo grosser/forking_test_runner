@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require "spec_helper"
 require "tempfile"
 require "active_record/version"
@@ -5,13 +6,13 @@ require "json"
 require "fileutils"
 
 describe ForkingTestRunner do
-  let(:root) { File.expand_path("../../", __FILE__) }
+  let(:root) { File.expand_path('..', __dir__) }
 
-  def runner(command, options={})
+  def runner(command, options = {})
     sh("bundle exec #{root}/bin/forking-test-runner #{command}", options)
   end
 
-  def sh(command, options={})
+  def sh(command, options = {})
     gemfile = ENV["BUNDLE_GEMFILE"]
     result = Bundler.with_unbundled_env do
       ENV["BUNDLE_GEMFILE"] = gemfile
@@ -24,7 +25,7 @@ describe ForkingTestRunner do
   def with_env(hash)
     env = Bundler::ORIGINAL_ENV
     old = env.dup
-    hash.each { |k,v| env[k.to_s] = v }
+    hash.each { |k, v| env[k.to_s] = v }
     yield
   ensure
     env.replace(old)
@@ -48,7 +49,7 @@ describe ForkingTestRunner do
   end
 
   around do |test|
-    Dir.chdir File.expand_path("../dummy", __FILE__), &test
+    Dir.chdir File.expand_path('dummy', __dir__), &test
   end
 
   it "has a VERSION" do
@@ -90,7 +91,7 @@ describe ForkingTestRunner do
   end
 
   it "runs absolute files" do
-    result = runner(File.expand_path('../dummy/test/simple_test.rb', __FILE__))
+    result = runner(File.expand_path('dummy/test/simple_test.rb', __dir__))
     result.should include "simple_test.rb"
   end
 
@@ -98,7 +99,7 @@ describe ForkingTestRunner do
     with_env "FAIL_NOW" => "1" do
       result = runner("test", fail: true)
       result.should_not include "/dummy/" # no absolute path
-      result.should include "[test/pollution_test.rb:9]" # uses relative path
+      result.should include "[test/pollution_test.rb:10]" # uses relative path
       result.should include "simple_test.rb ---- OK"
       result.should include "pollution_test.rb ---- Fail"
     end
@@ -115,8 +116,8 @@ describe ForkingTestRunner do
   end
 
   describe "amend" do
-    # this test needs internet access
-    it "records runtime for travis" do
+    # this test needs internet access and amend service running
+    xit "records runtime for travis" do
       with_env TRAVIS_REPO_SLUG: "test-slug", TRAVIS_BUILD_NUMBER: "build#{rand(999999)}" do
         result = runner("test --record-runtime amend")
         url = result[/curl \S+/] || raise("no command found")
@@ -125,9 +126,9 @@ describe ForkingTestRunner do
       end
     end
 
-    # this test needs internet access
-    it "records runtime for buildkite" do
-      with_env BUILDKITE_JOB_ID: "#{rand(999999)}", BUILDKITE_ORG_SLUG: "foo", BUILDKITE_PIPELINE_SLUG: "bar" do
+    # this test needs internet access and amend service running
+    xit "records runtime for buildkite" do
+      with_env BUILDKITE_JOB_ID: rand(999999).to_s, BUILDKITE_ORG_SLUG: "foo", BUILDKITE_PIPELINE_SLUG: "bar" do
         result = runner("test --record-runtime amend")
         url = result[/curl \S+/] || raise("no command found")
         result = sh "curl --silent #{url}"
@@ -174,26 +175,21 @@ describe ForkingTestRunner do
     result = with_env "COVERAGE" => "line" do
       runner("test/coverage.rb --merge-coverage")
     end
-    if ActiveRecord::VERSION::STRING < "4.2.0"
-      # older rails versions do some evil monkey patching that prevents us from recording coverage during fixture load
-      result.should include "user: [1, 1, 0, nil, nil] preloaded: [1, 1, 1, nil, nil, 1, 1, nil, nil]"
-    else
-      result.should include "user: [1, 1, 1, nil, nil] preloaded: [1, 1, 1, nil, nil, 1, 1, nil, nil]"
-    end
+    result.should include "user: [nil, 1, 1, 1, nil, nil] preloaded: [nil, 1, 1, 1, nil, nil, 1, 1, nil, nil]"
   end
 
   it "can keep branch coverage across forks" do
     result = with_env "COVERAGE" => "branches" do
       runner("test/coverage.rb --merge-coverage")
     end
-    result.should include "user: {:lines=>[1, 1, 1, nil, nil], :branches=>{[:if, 0, 3, 4, 3, 36]=>{[:then, 1, 3, 4, 3, 8]=>0, [:else, 2, 3, 4, 3, 36]=>1}}} preloaded: {:lines=>[1, 1, 1, nil, nil, 1, 1, nil, nil], :branches=>{}}"
+    result.should include "user: {:lines=>[nil, 1, 1, 1, nil, nil], :branches=>{[:if, 0, 4, 4, 4, 36]=>{[:then, 1, 4, 4, 4, 8]=>0, [:else, 2, 4, 4, 4, 36]=>1}}} preloaded: {:lines=>[nil, 1, 1, 1, nil, nil, 1, 1, nil, nil], :branches=>{}}"
   end
 
   it "can merge branch coverage" do
     ForkingTestRunner::CoverageCapture.merge_coverage(
-      {"foo.rb" => {lines: [1,2,3], branches: {foo: {bar: 0, baz: 1}}}},
-      {"foo.rb" => {lines: [1,2,3], branches: {foo: {bar: 1, baz: 0}}}}
-    ).should == {"foo.rb" => {lines: [2,4,6], branches: {foo: {bar: 1, baz: 1}}}}
+      { "foo.rb" => { lines: [1, 2, 3], branches: { foo: { bar: 0, baz: 1 } } } },
+      { "foo.rb" => { lines: [1, 2, 3], branches: { foo: { bar: 1, baz: 0 } } } }
+    ).should == { "foo.rb" => { lines: [2, 4, 6], branches: { foo: { bar: 1, baz: 1 } } } }
   end
 
   describe "quiet mode" do
@@ -225,31 +221,31 @@ describe ForkingTestRunner do
           Running tests test/slow_d.rb test/slow_d.rb
           ------ >>> test/slow_d.rb
           Run options: --seed d
-          
+
           # Running:
-          
-          
-          
+
+
+
           Finished in 0.0s, 0.0 runs/s, 0.0 assertions/s.
-          
+
           0 runs, 0 assertions, 0 failures, 0 errors, 0 skips
           ------ <<< test/slow_d.rb ---- OK
           ------ >>> test/slow_d.rb
           Run options: --seed d
-          
+
           # Running:
-          
-          
-          
+
+
+
           Finished in 0.0s, 0.0 runs/s, 0.0 assertions/s.
-          
+
           0 runs, 0 assertions, 0 failures, 0 errors, 0 skips
           ------ <<< test/slow_d.rb ---- OK
-          
+
           Results:
           test/slow_d.rb: OK
           test/slow_d.rb: OK
-          
+
           0 assertions, 0 errors, 0 failures, 0 runs, 0 skips
         TEXT
       end.should < 2
@@ -328,7 +324,7 @@ describe ForkingTestRunner do
     end
 
     it "runs them" do
-      with_env("DUMMY_SPEC_CALLBACK_FILE" =>  @tempfile.path) do
+      with_env("DUMMY_SPEC_CALLBACK_FILE" => @tempfile.path) do
         runner("test/simple_test.rb")
       end
       @tempfile.read.should == "before_fork_called\nafter_fork_called\n"
@@ -373,7 +369,7 @@ describe ForkingTestRunner do
 
   describe ".summarize_partial_reports" do
     before do
-      ForkingTestRunner::SingleCov = "fake"
+      ForkingTestRunner::SingleCov = +"fake" # rubocop:disable Naming/ConstantName
       ForkingTestRunner::SingleCov.should_receive(:coverage_report).and_return "coverage/out.json"
       ForkingTestRunner::SingleCov.should_receive(:coverage_report=)
       ForkingTestRunner.instance_variable_set(:@options, {})
@@ -386,12 +382,12 @@ describe ForkingTestRunner do
     end
 
     it "works" do
-      File.write("#{ForkingTestRunner::CONVERAGE_REPORT_PREFIX}1.json", JSON.dump("Minitest": {coverage: {b: [0, 1, 0]}}))
-      File.write("#{ForkingTestRunner::CONVERAGE_REPORT_PREFIX}2.json", JSON.dump("Minitest": {coverage: {b: [1, 0, 0]}}))
+      File.write("#{ForkingTestRunner::CONVERAGE_REPORT_PREFIX}1.json", JSON.dump(Minitest: { coverage: { b: [0, 1, 0] } }))
+      File.write("#{ForkingTestRunner::CONVERAGE_REPORT_PREFIX}2.json", JSON.dump(Minitest: { coverage: { b: [1, 0, 0] } }))
       ForkingTestRunner.send(:summarize_partial_reports)
       out = JSON.parse(File.read("coverage/out.json"), symbolize_names: true)
-      out[:"Minitest"].delete :timestamp
-      out.should == { "Minitest": {coverage: { b: [1, 1, 0] } } }
+      out[:Minitest].delete :timestamp
+      out.should == { Minitest: { coverage: { b: [1, 1, 0] } } }
     end
   end
 end

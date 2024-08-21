@@ -1,9 +1,10 @@
+# frozen_string_literal: true
 require "spec_helper"
 
 describe "Foo" do
-  class DummyClass
+  class DummyClass # rubocop:disable Lint/ConstantDefinitionInBlock TODO define via lambda
     def self.method_under_test
-      STDERR.puts 'Warning: Code Under Test'
+      warn 'Warning: Code Under Test'
       true
     end
   end
