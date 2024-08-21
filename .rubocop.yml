@@ -1,3 +1,5 @@
+inherit_from: .rubocop_todo.yml
+
 AllCops:
   NewCops: enable
   TargetRubyVersion: 2.7 # match gemspec and .github
