@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module ForkingTestRunner
   # read and delete options we support and pass the rest through to the underlying test runner (-v / --seed etc)
   module CLI

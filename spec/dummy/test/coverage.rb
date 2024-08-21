@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 PreloadedCoverage.generate_coverage_after_fork
 result = Coverage.result
 user = result.fetch(File.expand_path('../lib/user.rb', __dir__))

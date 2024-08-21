@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require_relative "../test/test_helper"
 
 class PollutionTest < ActiveSupport::TestCase

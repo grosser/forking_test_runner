@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 name = "forking_test_runner"
 require "./lib/#{name.gsub("-", "/")}/version"
 

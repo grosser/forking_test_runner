@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require "spec_helper"
 require "tempfile"
 require "active_record/version"
@@ -98,7 +99,7 @@ describe ForkingTestRunner do
     with_env "FAIL_NOW" => "1" do
       result = runner("test", fail: true)
       result.should_not include "/dummy/" # no absolute path
-      result.should include "[test/pollution_test.rb:9]" # uses relative path
+      result.should include "[test/pollution_test.rb:10]" # uses relative path
       result.should include "simple_test.rb ---- OK"
       result.should include "pollution_test.rb ---- Fail"
     end
@@ -174,19 +175,14 @@ describe ForkingTestRunner do
     result = with_env "COVERAGE" => "line" do
       runner("test/coverage.rb --merge-coverage")
     end
-    if ActiveRecord::VERSION::STRING < "4.2.0"
-      # older rails versions do some evil monkey patching that prevents us from recording coverage during fixture load
-      result.should include "user: [1, 1, 0, nil, nil] preloaded: [1, 1, 1, nil, nil, 1, 1, nil, nil]"
-    else
-      result.should include "user: [1, 1, 1, nil, nil] preloaded: [1, 1, 1, nil, nil, 1, 1, nil, nil]"
-    end
+    result.should include "user: [nil, 1, 1, 1, nil, nil] preloaded: [nil, 1, 1, 1, nil, nil, 1, 1, nil, nil]"
   end
 
   it "can keep branch coverage across forks" do
     result = with_env "COVERAGE" => "branches" do
       runner("test/coverage.rb --merge-coverage")
     end
-    result.should include "user: {:lines=>[1, 1, 1, nil, nil], :branches=>{[:if, 0, 3, 4, 3, 36]=>{[:then, 1, 3, 4, 3, 8]=>0, [:else, 2, 3, 4, 3, 36]=>1}}} preloaded: {:lines=>[1, 1, 1, nil, nil, 1, 1, nil, nil], :branches=>{}}"
+    result.should include "user: {:lines=>[nil, 1, 1, 1, nil, nil], :branches=>{[:if, 0, 4, 4, 4, 36]=>{[:then, 1, 4, 4, 4, 8]=>0, [:else, 2, 4, 4, 4, 36]=>1}}} preloaded: {:lines=>[nil, 1, 1, 1, nil, nil, 1, 1, nil, nil], :branches=>{}}"
   end
 
   it "can merge branch coverage" do

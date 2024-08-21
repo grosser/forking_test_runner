@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'benchmark'
 require 'optparse'
 require 'forking_test_runner/version'
@@ -7,8 +8,8 @@ require 'parallel'
 require 'tempfile'
 
 module ForkingTestRunner
-  CLEAR = "------".freeze
-  CONVERAGE_REPORT_PREFIX = "coverage/fork-".freeze
+  CLEAR = "------"
+  CONVERAGE_REPORT_PREFIX = "coverage/fork-"
 
   class << self
     attr_accessor :before_fork_callbacks, :after_fork_callbacks
