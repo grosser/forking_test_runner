@@ -35,6 +35,7 @@ GEM
       concurrent-ruby (~> 1.0)
     json (2.7.2)
     language_server-protocol (3.17.0.3)
+    logger (1.6.1)
     minitest (5.25.1)
     mutex_m (0.2.0)
     parallel (1.26.3)
@@ -97,6 +98,7 @@ DEPENDENCIES
   bump
   bundler (~> 2.4, >= 2.4.22)
   forking_test_runner!
+  logger
   minitest
   rake
   rspec

@@ -89,6 +89,7 @@ DEPENDENCIES
   bump
   bundler (~> 2.4, >= 2.4.22)
   forking_test_runner!
+  logger
   minitest
   rake
   rspec
