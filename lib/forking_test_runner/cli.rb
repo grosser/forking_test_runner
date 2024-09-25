@@ -28,7 +28,7 @@ module ForkingTestRunner
     class << self
       def parse_options(argv)
         options = OPTIONS.each_with_object({}) do |(setting, flag, _, type), all|
-          all[setting] = delete_argv(flag.split('=', 2)[0], argv, type: type)
+          all[setting] = delete_argv(flag.split('=', 2)[0], argv, type:)
         end
 
         # show version

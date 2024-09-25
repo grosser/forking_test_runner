@@ -9,7 +9,7 @@ require 'tempfile'
 
 module ForkingTestRunner
   CLEAR = "------"
-  CONVERAGE_REPORT_PREFIX = "coverage/fork-"
+  COVERAGE_REPORT_PREFIX = "coverage/fork-"
 
   class << self
     attr_accessor :before_fork_callbacks, :after_fork_callbacks
@@ -96,9 +96,9 @@ module ForkingTestRunner
 
     private
 
-    def with_lock(&block)
+    def with_lock(&)
       return yield unless @options.fetch(:parallel)
-      Tempfile.open "forking-test-runner-lock", &block
+      Tempfile.open("forking-test-runner-lock", &)
     end
 
     def sync_stdout(lock)
@@ -237,14 +237,21 @@ module ForkingTestRunner
       # reuse our pre-loaded fixtures even if we have a different connection
       fixtures = ActiveRecord::FixtureSet
       fixtures_eigenclass = class << fixtures; self; end
-      fixtures_eigenclass.send(:define_method, :cache_for_connection) do |_connection|
+
+      name = (ActiveRecord::VERSION::STRING >= "7.2.0" ? :cache_for_connection_pool : :cache_for_connection)
+      fixtures_eigenclass.send(:define_method, name) do |_pool|
         fixtures.class_variable_get(:@@all_cached_fixtures)[:unique]
       end
 
       ActiveSupport::TestCase.fixtures :all
 
       fixtures.create_fixtures(
-        ActiveSupport::TestCase.fixture_path,
+        (if ActiveSupport::TestCase.respond_to?(:fixture_paths)
+           ActiveSupport::TestCase.fixture_paths
+         else
+           ActiveSupport::TestCase.fixture_path
+         end
+        ), # TODO: remove after dropping rails 7,0 support
         ActiveSupport::TestCase.fixture_table_names,
         ActiveSupport::TestCase.fixture_class_names
       )
@@ -300,14 +307,13 @@ module ForkingTestRunner
             SimpleCov.command_name file
           end
           if partial_reports_for_single_cov?
-            SingleCov.coverage_report = "#{CONVERAGE_REPORT_PREFIX}#{Process.pid}.json"
+            SingleCov.coverage_report = "#{COVERAGE_REPORT_PREFIX}#{Process.pid}.json"
           end
 
           @after_fork_callbacks.each(&:call)
 
           if active_record?
-            key = (ActiveRecord::VERSION::STRING >= "4.1.0" ? :test : "test")
-            ActiveRecord::Base.establish_connection key
+            ActiveRecord::Base.establish_connection :test
           end
           enable_test_autorun(file)
         end
@@ -338,8 +344,8 @@ module ForkingTestRunner
       tests = ParallelTests::Test::Runner.send(
         :tests_with_size,
         tests,
-        runtime_log: runtime_log,
-        group_by: group_by
+        runtime_log:,
+        group_by:
       )
       groups = ParallelTests::Grouper.in_even_groups_by_size(tests, group_count, {})
       group = groups[group - 1] || raise("Group #{group} not found")
@@ -383,7 +389,7 @@ module ForkingTestRunner
     end
 
     def summarize_partial_reports
-      reports = Dir.glob("#{CONVERAGE_REPORT_PREFIX}*")
+      reports = Dir.glob("#{COVERAGE_REPORT_PREFIX}*")
       return if reports.empty?
       key = nil
 

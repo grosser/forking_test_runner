@@ -13,11 +13,9 @@ configurations = {
     database: File.expand_path("../db#{ENV["FORCE_TEST_ENV_NUMBER"] || ENV["TEST_ENV_NUMBER"]}.sqlite", __FILE__)
   }
 }
-ActiveRecord::Base.configurations =
-  (ActiveRecord::VERSION::STRING >= "5.1.0" ? { "test" => configurations } : configurations)
+ActiveRecord::Base.configurations = { "test" => configurations }
 
-key = (ActiveRecord::VERSION::STRING >= "4.1.0" ? :test : "test")
-ActiveRecord::Base.establish_connection key
+ActiveRecord::Base.establish_connection :test
 
 # create tables
 ActiveRecord::Schema.verbose = false
@@ -38,4 +36,10 @@ require 'active_record/fixtures'
 ActiveSupport::TestCase.include ActiveRecord::TestFixtures
 
 # have to tell AS where to find fixtures or it looks into the the root directory ...
-ActiveSupport::TestCase.fixture_path = File.expand_path('fixtures', __dir__)
+path = File.expand_path('fixtures', __dir__)
+(if ActiveSupport::TestCase.respond_to?(:fixture_paths=)
+   ActiveSupport::TestCase.fixture_paths = [path]
+ else
+   ActiveSupport::TestCase.fixture_path = path
+ end
+) # TODO: remove after dropping rails 7,0 support
