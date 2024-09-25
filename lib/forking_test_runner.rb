@@ -237,7 +237,9 @@ module ForkingTestRunner
       # reuse our pre-loaded fixtures even if we have a different connection
       fixtures = ActiveRecord::FixtureSet
       fixtures_eigenclass = class << fixtures; self; end
-      fixtures_eigenclass.send(:define_method, :cache_for_connection_pool) do |_pool|
+
+      name = (ActiveRecord::VERSION::STRING >= "7.2.0" ? :cache_for_connection_pool : :cache_for_connection)
+      fixtures_eigenclass.send(:define_method, name) do |_pool|
         fixtures.class_variable_get(:@@all_cached_fixtures)[:unique]
       end
 
@@ -311,8 +313,7 @@ module ForkingTestRunner
           @after_fork_callbacks.each(&:call)
 
           if active_record?
-            key = (ActiveRecord::VERSION::STRING >= "4.1.0" ? :test : "test")
-            ActiveRecord::Base.establish_connection key
+            ActiveRecord::Base.establish_connection :test
           end
           enable_test_autorun(file)
         end
