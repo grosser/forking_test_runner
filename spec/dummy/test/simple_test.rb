@@ -15,6 +15,6 @@ class SimpleTest < ActiveSupport::TestCase
   end
 
   test "loading fixtures once" do
-    assert_equal 2, $fixtures_loaded # TODO: this should be 1
+    assert_equal 1, $fixtures_loaded
   end
 end
