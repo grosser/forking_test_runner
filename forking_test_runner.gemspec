@@ -14,6 +14,7 @@ Gem::Specification.new name, ForkingTestRunner::VERSION do |s|
   s.add_development_dependency "drb"
   s.add_development_dependency "logger"
   s.add_development_dependency "minitest"
+  s.add_development_dependency "mutex_m"
   s.add_development_dependency "rake"
   s.add_development_dependency "rspec"
   s.add_development_dependency "rubocop", "~> 1.66.1" # lock version so we don't get new cops added

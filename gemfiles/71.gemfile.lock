@@ -101,6 +101,7 @@ DEPENDENCIES
   forking_test_runner!
   logger
   minitest
+  mutex_m
   rake
   rspec
   rubocop (~> 1.66.1)
