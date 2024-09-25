@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-# if you see "deprecator", enable this line, errors otherwise blows up in some CI combinations
-require "active_support"
-
+require "active_support" # otherwise getting "deprecator" errors
 require "active_support/test_case"
 require "minitest/autorun"
 
