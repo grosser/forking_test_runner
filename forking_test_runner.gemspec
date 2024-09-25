@@ -11,6 +11,7 @@ Gem::Specification.new name, ForkingTestRunner::VERSION do |s|
   s.add_dependency "parallel_tests", ">= 1.3.7"
   s.add_development_dependency "bump"
   s.add_development_dependency "bundler", '~> 2.4', '>= 2.4.22' # for ruby 3.1 support
+  s.add_development_dependency "drb"
   s.add_development_dependency "logger"
   s.add_development_dependency "minitest"
   s.add_development_dependency "rake"

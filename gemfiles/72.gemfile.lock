@@ -98,6 +98,7 @@ DEPENDENCIES
   activerecord (~> 7.2.0)
   bump
   bundler (~> 2.4, >= 2.4.22)
+  drb
   forking_test_runner!
   logger
   minitest
