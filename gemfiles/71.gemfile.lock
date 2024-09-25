@@ -73,12 +73,12 @@ GEM
     rubocop-ast (1.32.3)
       parser (>= 3.3.1.0)
     ruby-progressbar (1.13.0)
-    sqlite3 (1.6.9-aarch64-linux)
-    sqlite3 (1.6.9-arm-linux)
-    sqlite3 (1.6.9-arm64-darwin)
-    sqlite3 (1.6.9-x86-linux)
-    sqlite3 (1.6.9-x86_64-darwin)
-    sqlite3 (1.6.9-x86_64-linux)
+    sqlite3 (1.7.3-aarch64-linux)
+    sqlite3 (1.7.3-arm-linux)
+    sqlite3 (1.7.3-arm64-darwin)
+    sqlite3 (1.7.3-x86-linux)
+    sqlite3 (1.7.3-x86_64-darwin)
+    sqlite3 (1.7.3-x86_64-linux)
     timeout (0.4.1)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
@@ -101,7 +101,7 @@ DEPENDENCIES
   rake
   rspec
   rubocop (~> 1.66.1)
-  sqlite3 (~> 1.6.0)
+  sqlite3 (~> 1.4)
 
 BUNDLED WITH
    2.5.20
