@@ -96,9 +96,9 @@ module ForkingTestRunner
 
     private
 
-    def with_lock(&block)
+    def with_lock(&)
       return yield unless @options.fetch(:parallel)
-      Tempfile.open "forking-test-runner-lock", &block
+      Tempfile.open("forking-test-runner-lock", &)
     end
 
     def sync_stdout(lock)
@@ -244,7 +244,12 @@ module ForkingTestRunner
       ActiveSupport::TestCase.fixtures :all
 
       fixtures.create_fixtures(
-        ActiveSupport::TestCase.fixture_path,
+        (if ActiveSupport::TestCase.respond_to?(:fixture_paths)
+           ActiveSupport::TestCase.fixture_paths
+         else
+           ActiveSupport::TestCase.fixture_path
+         end
+        ), # TODO: remove after dropping rails 7,0 support
         ActiveSupport::TestCase.fixture_table_names,
         ActiveSupport::TestCase.fixture_class_names
       )
@@ -338,8 +343,8 @@ module ForkingTestRunner
       tests = ParallelTests::Test::Runner.send(
         :tests_with_size,
         tests,
-        runtime_log: runtime_log,
-        group_by: group_by
+        runtime_log:,
+        group_by:
       )
       groups = ParallelTests::Grouper.in_even_groups_by_size(tests, group_count, {})
       group = groups[group - 1] || raise("Group #{group} not found")

@@ -38,4 +38,10 @@ require 'active_record/fixtures'
 ActiveSupport::TestCase.include ActiveRecord::TestFixtures
 
 # have to tell AS where to find fixtures or it looks into the the root directory ...
-ActiveSupport::TestCase.fixture_path = File.expand_path('fixtures', __dir__)
+path = File.expand_path('fixtures', __dir__)
+(if ActiveSupport::TestCase.respond_to?(:fixture_paths=)
+   ActiveSupport::TestCase.fixture_paths = [path]
+ else
+   ActiveSupport::TestCase.fixture_path = path
+ end
+) # TODO: remove after dropping rails 7,0 support
