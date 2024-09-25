@@ -97,9 +97,11 @@ DEPENDENCIES
   activerecord (~> 7.1.0)
   bump
   bundler (~> 2.4, >= 2.4.22)
+  drb
   forking_test_runner!
   logger
   minitest
+  mutex_m
   rake
   rspec
   rubocop (~> 1.66.1)
