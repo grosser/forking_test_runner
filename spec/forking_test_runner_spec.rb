@@ -382,8 +382,8 @@ describe ForkingTestRunner do
     end
 
     it "works" do
-      File.write("#{ForkingTestRunner::CONVERAGE_REPORT_PREFIX}1.json", JSON.dump(Minitest: { coverage: { b: [0, 1, 0] } }))
-      File.write("#{ForkingTestRunner::CONVERAGE_REPORT_PREFIX}2.json", JSON.dump(Minitest: { coverage: { b: [1, 0, 0] } }))
+      File.write("#{ForkingTestRunner::COVERAGE_REPORT_PREFIX}1.json", JSON.dump(Minitest: { coverage: { b: [0, 1, 0] } }))
+      File.write("#{ForkingTestRunner::COVERAGE_REPORT_PREFIX}2.json", JSON.dump(Minitest: { coverage: { b: [1, 0, 0] } }))
       ForkingTestRunner.send(:summarize_partial_reports)
       out = JSON.parse(File.read("coverage/out.json"), symbolize_names: true)
       out[:Minitest].delete :timestamp

@@ -9,7 +9,7 @@ require 'tempfile'
 
 module ForkingTestRunner
   CLEAR = "------"
-  CONVERAGE_REPORT_PREFIX = "coverage/fork-"
+  COVERAGE_REPORT_PREFIX = "coverage/fork-"
 
   class << self
     attr_accessor :before_fork_callbacks, :after_fork_callbacks
@@ -307,7 +307,7 @@ module ForkingTestRunner
             SimpleCov.command_name file
           end
           if partial_reports_for_single_cov?
-            SingleCov.coverage_report = "#{CONVERAGE_REPORT_PREFIX}#{Process.pid}.json"
+            SingleCov.coverage_report = "#{COVERAGE_REPORT_PREFIX}#{Process.pid}.json"
           end
 
           @after_fork_callbacks.each(&:call)
@@ -389,7 +389,7 @@ module ForkingTestRunner
     end
 
     def summarize_partial_reports
-      reports = Dir.glob("#{CONVERAGE_REPORT_PREFIX}*")
+      reports = Dir.glob("#{COVERAGE_REPORT_PREFIX}*")
       return if reports.empty?
       key = nil
 

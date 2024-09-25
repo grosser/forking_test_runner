@@ -1,4 +1,12 @@
 # frozen_string_literal: true
+
+# otherwise blows up in some CI combinations
+require "active_support/version"
+if ActiveSupport::VERSION::STRING <= "7.1.0"
+  require "active_support/deprecation"
+  require "active_support/deprecator"
+end
+
 require "active_support/test_case"
 require "minitest/autorun"
 
