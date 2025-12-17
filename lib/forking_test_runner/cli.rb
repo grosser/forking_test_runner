@@ -9,6 +9,7 @@ module ForkingTestRunner
       [:no_fixtures, "--no-fixtures", "Do not load fixtures"],
       [:no_ar, "--no-ar", "Disable ActiveRecord logic"],
       [:merge_coverage, "--merge-coverage", "Merge base code coverage into individual files coverage and summarize coverage report"],
+      [:only_merge_configure, "--only-merge-configure", "Do not merge unconfigured coverage to avoid overhead (needs --merge-coverage)"],
       [
         :record_runtime,
         "--record-runtime=MODE",

@@ -185,6 +185,14 @@ describe ForkingTestRunner do
     result.should include "user: {:lines=>[nil, 1, 1, 1, nil, nil], :branches=>{[:if, 0, 4, 4, 4, 36]=>{[:then, 1, 4, 4, 4, 8]=>0, [:else, 2, 4, 4, 4, 36]=>1}}} preloaded: {:lines=>[nil, 1, 1, 1, nil, nil, 1, 1, nil, nil], :branches=>{}}"
   end
 
+  it "drops uncovered if requested" do
+    result = with_env "COVERAGE" => "branches" do
+      runner("test/coverage.rb --merge-coverage --only-merge-configured")
+    end
+    puts result
+    result.should include ""
+  end
+
   it "can merge branch coverage" do
     ForkingTestRunner::CoverageCapture.merge_coverage(
       { "foo.rb" => { lines: [1, 2, 3], branches: { foo: { bar: 0, baz: 1 } } } },
