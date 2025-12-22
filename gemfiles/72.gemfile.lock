@@ -106,7 +106,7 @@ DEPENDENCIES
   rake
   rspec
   rubocop (~> 1.66.1)
-  sqlite3 (~> 1.4)
+  sqlite3 (~> 1.7)
 
 BUNDLED WITH
    2.5.20

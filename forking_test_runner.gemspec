@@ -19,7 +19,7 @@ Gem::Specification.new name, ForkingTestRunner::VERSION do |s|
   s.add_development_dependency "rake"
   s.add_development_dependency "rspec"
   s.add_development_dependency "rubocop", "~> 1.66.1" # lock version so we don't get new cops added
-  s.add_development_dependency "sqlite3", "~> 1.4"
+  s.add_development_dependency "sqlite3"
   s.required_ruby_version = ">= 3.2.0"
 
   s.executables = ["forking-test-runner"]

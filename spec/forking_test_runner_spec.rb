@@ -85,7 +85,7 @@ describe ForkingTestRunner do
     result = runner("test")
     result.should include "simple_test.rb"
     result.should include "pollution_test.rb"
-    result.should include "9 assertions, 0 errors, 0 failures"
+    result.should include "10 assertions, 0 errors, 0 failures"
     result.should_not include "0 tests " # minitest was not disabled
     result.should_not include "Time:" # no runtime log -> no time info
   end
@@ -99,7 +99,7 @@ describe ForkingTestRunner do
     with_env "FAIL_NOW" => "1" do
       result = runner("test", fail: true)
       result.should_not include "/dummy/" # no absolute path
-      result.should include "[test/pollution_test.rb:10]" # uses relative path
+      result.should include "[test/pollution_test.rb:11]" # uses relative path
       result.should include "simple_test.rb ---- OK"
       result.should include "pollution_test.rb ---- Fail"
     end

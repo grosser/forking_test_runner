@@ -2,5 +2,4 @@
 source "https://rubygems.org"
 gemspec path: "../"
 
-gem 'activerecord', '~> 7.2.0'
-gem 'sqlite3', '~> 1.7'
+gem 'activerecord', '~> 8.1.0'
