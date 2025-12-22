@@ -10,7 +10,7 @@ jobs:
     strategy:
       matrix:
         ruby: ['3.2', '3.3', '3.4']
-        gemfile: ['72']
+        gemfile: ['72', '80', '81']
         task: ['spec']
         include:
         - { ruby: '3.2', gemfile: '72', task: 'rubocop' } # match gemspec and .rubocop.yml
