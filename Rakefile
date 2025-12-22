@@ -42,13 +42,12 @@ task :rubocop do
   sh "rubocop --parallel"
 end
 
-desc "Bundle all gemfiles"
-task :bundle_all do
-  cmd = ENV["CMD"]
+desc "Bundle all gemfiles CMD=install"
+task :bundle do
+  cmd = ENV["CMD"] || "install"
   Bundler.with_original_env do
     Dir["gemfiles/*.gemfile"].each do |gemfile|
       sh "BUNDLE_GEMFILE=#{gemfile} bundle #{cmd}"
-      sh "BUNDLE_GEMFILE=#{gemfile} bundle lock --add-platform x86_64-linux" # for github
     end
   end
 end
