@@ -14,7 +14,7 @@ Gem::Specification.new name, ForkingTestRunner::VERSION do |s|
   s.add_development_dependency "bundler"
   s.add_development_dependency "drb"
   s.add_development_dependency "logger"
-  s.add_development_dependency "minitest", "~> 5.0"
+  s.add_development_dependency "minitest", "~> 6.0"
   s.add_development_dependency "mutex_m"
   s.add_development_dependency "rake"
   s.add_development_dependency "rspec"

@@ -40,7 +40,8 @@ GEM
     language_server-protocol (3.17.0.3)
     logger (1.6.1)
     mini_portile2 (2.8.9)
-    minitest (5.27.0)
+    minitest (6.0.0)
+      prism (~> 1.5)
     mutex_m (0.2.0)
     parallel (1.26.3)
     parallel_tests (4.7.2)
@@ -48,6 +49,7 @@ GEM
     parser (3.3.5.0)
       ast (~> 2.4.1)
       racc
+    prism (1.7.0)
     racc (1.8.1)
     rainbow (3.1.1)
     rake (13.2.1)
@@ -97,7 +99,7 @@ DEPENDENCIES
   drb
   forking_test_runner!
   logger
-  minitest (~> 5.0)
+  minitest (~> 6.0)
   mutex_m
   rake
   rspec
