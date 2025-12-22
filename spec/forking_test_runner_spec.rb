@@ -182,7 +182,11 @@ describe ForkingTestRunner do
     result = with_env "COVERAGE" => "branches" do
       runner("test/coverage.rb --merge-coverage")
     end
-    result.should include "user: {:lines=>[nil, 1, 1, 1, nil, nil], :branches=>{[:if, 0, 4, 4, 4, 36]=>{[:then, 1, 4, 4, 4, 8]=>0, [:else, 2, 4, 4, 4, 36]=>1}}} preloaded: {:lines=>[nil, 1, 1, 1, nil, nil, 1, 1, nil, nil], :branches=>{}}"
+    if RUBY_VERSION >= "3.4.0"
+      result.should include "user: {lines: [nil, 1, 1, 1, nil, nil], branches: {[:if, 0, 4, 4, 4, 36] => {[:then, 1, 4, 4, 4, 8] => 0, [:else, 2, 4, 4, 4, 36] => 1}}} preloaded: {lines: [nil, 1, 1, 1, nil, nil, 1, 1, nil, nil], branches: {}}"
+    else
+      result.should include "user: {:lines=>[nil, 1, 1, 1, nil, nil], :branches=>{[:if, 0, 4, 4, 4, 36]=>{[:then, 1, 4, 4, 4, 8]=>0, [:else, 2, 4, 4, 4, 36]=>1}}} preloaded: {:lines=>[nil, 1, 1, 1, nil, nil, 1, 1, nil, nil], :branches=>{}}"
+    end
   end
 
   it "can merge branch coverage" do
