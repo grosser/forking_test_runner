@@ -130,6 +130,11 @@ describe ForkingTestRunner do
     result.should include "diff to expected" # global summary
   end
 
+  it "can read args with =" do
+    result = runner("test --group=1 --groups=2")
+    result.should include "Running tests test/another_test.rb test/simple_test.rb\n"
+  end
+
   it "can run multiple groups" do
     result = runner("test --group 1,2 --groups 4")
     result.scan("<<<").size.should == 2

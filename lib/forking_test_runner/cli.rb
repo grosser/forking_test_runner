@@ -28,7 +28,7 @@ module ForkingTestRunner
     class << self
       def parse_options(argv)
         options = OPTIONS.each_with_object({}) do |(setting, flag, _, type), all|
-          all[setting] = delete_argv(flag.split('=', 2)[0], argv, type:)
+          all[setting] = delete_argv(flag.split('=', 2)[0], argv, type: type)
         end
 
         # show version
@@ -76,18 +76,24 @@ module ForkingTestRunner
       # so minitest / rspec can read their own options (--seed / -v ...)
       #  - keep our options clear / unambiguous to avoid overriding
       #  - read all serial non-flag arguments as tests and leave only unknown options behind
-      #  - use .fetch everywhere to make sure nothing is misspelled
-      # GOOD: test --ours --theirs
-      # OK: --ours test --theirs
-      # BAD: --theirs test --ours
       def delete_argv(name, argv, type: nil)
-        return unless index = argv.index(name)
-        argv.delete_at(index)
-        if type
-          found = argv.delete_at(index) || raise("Missing argument for #{name}")
-          send(type.name, found) # case found
+        if !type # no value needed
+          if (index = argv.index(name))
+            argv.delete_at(index)
+            true
+          end
         else
-          true
+          value =
+            if (index = argv.index(name)) # user used `--foo bar` style ?
+              argv.delete_at(index)
+              argv.delete_at(index) || raise(ArgumentError, "Missing argument for #{name}")
+            else # user used `--foo=bar` style ?
+              prefix = "#{name}="
+              return unless (index = argv.index { |arg| arg.start_with?(prefix) })
+              argv.delete_at(index).delete_prefix(prefix)
+            end
+
+          send(type.name, value) # for example Integer(found)
         end
       end
     end
