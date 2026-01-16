@@ -115,36 +115,6 @@ describe ForkingTestRunner do
     result.should include "PROGRAM IS test/show_program_name.rb YEAH"
   end
 
-  describe "amend" do
-    # this test needs internet access and amend service running
-    xit "records runtime for travis" do
-      with_env TRAVIS_REPO_SLUG: "test-slug", TRAVIS_BUILD_NUMBER: "build#{rand(999999)}" do
-        result = runner("test --record-runtime amend")
-        url = result[/curl \S+/] || raise("no command found")
-        result = sh "curl --silent #{url}"
-        assert_correct_runtime(result)
-      end
-    end
-
-    # this test needs internet access and amend service running
-    xit "records runtime for buildkite" do
-      with_env BUILDKITE_JOB_ID: rand(999999).to_s, BUILDKITE_ORG_SLUG: "foo", BUILDKITE_PIPELINE_SLUG: "bar" do
-        result = runner("test --record-runtime amend")
-        url = result[/curl \S+/] || raise("no command found")
-        result = sh "curl --silent #{url}"
-        assert_correct_runtime(result)
-      end
-    end
-
-    # this test needs internet access
-    it "fails when unable to determine unique slug" do
-      with_env TRAVIS_REPO_SLUG: nil, TRAVIS_BUILD_NUMBER: nil do
-        result = runner("test --record-runtime amend", fail: true)
-        result.should include "key not found"
-      end
-    end
-  end
-
   it "records simple runtime to disc" do
     restoring "runtime.log" do
       runner("test --record-runtime simple")
@@ -158,6 +128,11 @@ describe ForkingTestRunner do
     result.should include "Running tests test/another_test.rb\n" # only runs the 1 big test
     result.should include "Time: expected 1.0, actual 0." # per test time info
     result.should include "diff to expected" # global summary
+  end
+
+  it "can read args with =" do
+    result = runner("test --group=1 --groups=2")
+    result.should include "Running tests test/another_test.rb test/simple_test.rb\n"
   end
 
   it "can run multiple groups" do
@@ -194,6 +169,36 @@ describe ForkingTestRunner do
       { "foo.rb" => { lines: [1, 2, 3], branches: { foo: { bar: 0, baz: 1 } } } },
       { "foo.rb" => { lines: [1, 2, 3], branches: { foo: { bar: 1, baz: 0 } } } }
     ).should == { "foo.rb" => { lines: [2, 4, 6], branches: { foo: { bar: 1, baz: 1 } } } }
+  end
+
+  describe "amend" do
+    # this test needs internet access and amend service running
+    xit "records runtime for travis" do
+      with_env TRAVIS_REPO_SLUG: "test-slug", TRAVIS_BUILD_NUMBER: "build#{rand(999999)}" do
+        result = runner("test --record-runtime amend")
+        url = result[/curl \S+/] || raise("no command found")
+        result = sh "curl --silent #{url}"
+        assert_correct_runtime(result)
+      end
+    end
+
+    # this test needs internet access and amend service running
+    xit "records runtime for buildkite" do
+      with_env BUILDKITE_JOB_ID: rand(999999).to_s, BUILDKITE_ORG_SLUG: "foo", BUILDKITE_PIPELINE_SLUG: "bar" do
+        result = runner("test --record-runtime amend")
+        url = result[/curl \S+/] || raise("no command found")
+        result = sh "curl --silent #{url}"
+        assert_correct_runtime(result)
+      end
+    end
+
+    # this test needs internet access
+    it "fails when unable to determine unique slug" do
+      with_env TRAVIS_REPO_SLUG: nil, TRAVIS_BUILD_NUMBER: nil do
+        result = runner("test --record-runtime amend", fail: true)
+        result.should include "key not found"
+      end
+    end
   end
 
   describe "quiet mode" do

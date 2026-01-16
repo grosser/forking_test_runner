@@ -144,3 +144,9 @@ Style/GlobalVars:
 Lint/EmptyFile:
   Exclude:
   - "spec/dummy/lib/test_lib.rb"
+
+Style/HashSyntax:
+  EnforcedShorthandSyntax: never
+
+Style/IfInsideElse:
+  Enabled: false
