@@ -7,17 +7,22 @@ Bump.replace_in_default = Dir["gemfiles/*.lock"]
 
 # update readme before new change is committed
 class << Bump::Bump
+  def update_readme
+    file = "Readme.md"
+    marker = "<!-- Updated by rake bump:patch -->\n"
+    marker_rex = /#{Regexp.escape(marker)}.*#{Regexp.escape(marker)}/m
+    usage = `./bin/forking-test-runner --help`
+    raise "Failed to update readme" unless $?.success?
+    usage_with_marker = "#{marker}```\n#{usage}```\n#{marker}"
+    File.write(file, File.read(file).sub!(marker_rex, usage_with_marker) || raise("Unable to find #{marker.strip} in #{file}"))
+    file
+  end
+
   prepend(
     Module.new do
       def replace(*)
         super
-        file = "Readme.md"
-        marker = "<!-- Updated by rake bump:patch -->\n"
-        marker_rex = /#{Regexp.escape(marker)}.*#{Regexp.escape(marker)}/m
-        usage = `./bin/forking-test-runner --help`
-        raise "Failed to update readme" unless $?.success?
-        usage_with_marker = "#{marker}```\n#{usage}```\n#{marker}"
-        File.write(file, File.read(file).sub!(marker_rex, usage_with_marker) || raise("Unable to find #{marker.strip} in #{file}"))
+        file = Bump::Bump.update_readme
         `git add #{file}`
       end
     end
@@ -50,4 +55,9 @@ task :bundle do
       sh "BUNDLE_GEMFILE=#{gemfile} bundle #{cmd}"
     end
   end
+end
+
+desc "Update readme"
+task :readme do
+  Bump::Bump.update_readme
 end

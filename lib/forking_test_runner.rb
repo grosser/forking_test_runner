@@ -344,8 +344,8 @@ module ForkingTestRunner
       tests = ParallelTests::Test::Runner.send(
         :tests_with_size,
         tests,
-        runtime_log:,
-        group_by:
+        runtime_log: runtime_log,
+        group_by: group_by
       )
       groups = ParallelTests::Grouper.in_even_groups_by_size(tests, group_count, {})
       group = groups[group - 1] || raise("Group #{group} not found")
