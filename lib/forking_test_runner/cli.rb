@@ -11,16 +11,16 @@ module ForkingTestRunner
       [:merge_coverage, "--merge-coverage", "Merge base code coverage into individual files coverage and summarize coverage report"],
       [
         :record_runtime,
-        "--record-runtime=MODE",
+        "--record-runtime MODE",
         "\n      Record test runtime:\n        " \
         "simple = write to disk at --runtime-log)\n        " \
         "amend  = write from multiple remote workers via http://github.com/grosser/amend, needs TRAVIS_REPO_SLUG & TRAVIS_BUILD_NUMBER",
         String
       ],
-      [:runtime_log, "--runtime-log=FILE", "File to store runtime log in or runtime.log", String],
-      [:parallel, "--parallel=NUM", "Number of parallel groups to run at once", Integer],
-      [:group, "--group=NUM[,NUM]", "What group this is (use with --groups / starts at 1)", String],
-      [:groups, "--groups=NUM", "How many groups there are in total (use with --group)", Integer],
+      [:runtime_log, "--runtime-log FILE", "File to store runtime log in or runtime.log", String],
+      [:parallel, "--parallel NUM", "Number of parallel groups to run at once", Integer],
+      [:group, "--group NUM[,NUM]", "What group this is (use with --groups / starts at 1)", String],
+      [:groups, "--groups NUM", "How many groups there are in total (use with --group)", Integer],
       [:version, "--version", "Show version"],
       [:help, "--help", "Show help"]
     ].freeze
