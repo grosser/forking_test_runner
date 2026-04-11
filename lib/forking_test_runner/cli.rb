@@ -18,7 +18,7 @@ module ForkingTestRunner
         String
       ],
       [:runtime_log, "--runtime-log FILE", "File to store runtime log in or runtime.log", String],
-      [:parallel, "--parallel NUM", "Number of parallel groups to run at once", Integer],
+      [:parallel, "--parallel [NUM]", "Number of parallel groups to run at once", Integer],
       [:group, "--group NUM[,NUM]", "What group this is (use with --groups / starts at 1)", String],
       [:groups, "--groups NUM", "How many groups there are in total (use with --group)", Integer],
       [:version, "--version", "Show version"],
@@ -28,8 +28,12 @@ module ForkingTestRunner
     class << self
       def parse_options(argv)
         options = OPTIONS.each_with_object({}) do |(setting, flag, _, type), all|
-          all[setting] = delete_argv(flag.split(' ', 2)[0], argv, type: type)
+          optional = flag.include?("[")
+          all[setting] = delete_argv(flag.split(' ', 2)[0], argv, type: type, optional: optional)
         end
+
+        # default parallel to processor count
+        options[:parallel] = Parallel.processor_count if options[:parallel] == true
 
         # show version
         if options.fetch(:version)
@@ -76,12 +80,19 @@ module ForkingTestRunner
       # so minitest / rspec can read their own options (--seed / -v ...)
       #  - keep our options clear / unambiguous to avoid overriding
       #  - read all serial non-flag arguments as tests and leave only unknown options behind
-      def delete_argv(name, argv, type: nil)
+      def delete_argv(name, argv, type: nil, optional: false)
         if type # value needed
           value =
             if (index = argv.index(name)) # user used `--foo bar` style ?
               argv.delete_at(index)
-              argv.delete_at(index) || raise(ArgumentError, "Missing argument for #{name}")
+              next_arg = argv[index]
+              if next_arg && !next_arg.start_with?("-")
+                argv.delete_at(index)
+              elsif optional
+                return true
+              else
+                raise(ArgumentError, "Missing argument for #{name}")
+              end
             else # user used `--foo=bar` style ?
               prefix = "#{name}="
               return unless (index = argv.index { |arg| arg.start_with?(prefix) })

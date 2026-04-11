@@ -309,6 +309,15 @@ describe ForkingTestRunner do
       result.should include "TEST ENV  <-> "
     end
 
+    it "can run without specifying a number" do
+      result = runner("test/no_ar_test.rb --parallel --helper test/no_ar_helper.rb --quiet")
+      result.should == <<~TEXT
+        Running 1 test files
+        ------ >>> test/no_ar_test.rb
+        1 assertion, 0 errors, 0 failures, 1 run, 0 skips
+      TEXT
+    end
+
     it "can run with AR" do
       runner("test/ --parallel 2")
     end
