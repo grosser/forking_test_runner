@@ -66,8 +66,8 @@ module ForkingTestRunner
         puts "\nResults:"
         puts(
           results
-                    .sort_by { |_, _, _, r, _| r ? 0 : 1 } # failures should be last so they are easy to find
-                    .map { |f, _, _, r, _| "#{f}: #{r ? "OK" : "Fail"}" }
+            .sort_by { |_, _, _, r, _| r ? 0 : 1 } # failures should be last so they are easy to find
+            .map { |f, _, _, r, _| "#{f}: #{r ? "OK" : "Fail"}" }
         )
         puts
       end
@@ -82,7 +82,7 @@ module ForkingTestRunner
         puts "Time: #{diff.round(2)} diff to expected"
       end
 
-      if mode = @options.fetch(:record_runtime)
+      if (mode = @options.fetch(:record_runtime))
         # store runtime log
         log = runtime_log || 'runtime.log'
         record_test_runtime(mode, results, log)
@@ -162,7 +162,7 @@ module ForkingTestRunner
       when 'simple'
         File.write(log, data)
       when 'amend'
-        if id = ENV["BUILDKITE_JOB_ID"]
+        if (id = ENV["BUILDKITE_JOB_ID"])
           slug = "#{ENV.fetch("BUILDKITE_ORG_SLUG")}-#{ENV.fetch("BUILDKITE_PIPELINE_SLUG")}"
         else
           slug = ENV.fetch("TRAVIS_REPO_SLUG").sub("/", "-")
@@ -279,7 +279,7 @@ module ForkingTestRunner
 
       buffer = +""
 
-      while ch = rpipe.read(1)
+      while (ch = rpipe.read(1))
         buffer << ch
         $stdout.write(ch) if !@options.fetch(:quiet) && !@options.fetch(:parallel) # tee
       end
