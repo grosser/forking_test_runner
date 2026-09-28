@@ -279,9 +279,9 @@ module ForkingTestRunner
 
       buffer = +""
 
-      while (ch = rpipe.read(1))
-        buffer << ch
-        $stdout.write(ch) if !@options.fetch(:quiet) && !@options.fetch(:parallel) # tee
+      while (chunk = rpipe.read(4096))
+        buffer << chunk
+        $stdout.write(chunk) if !@options.fetch(:quiet) && !@options.fetch(:parallel) # tee
       end
 
       Process.wait(child)
