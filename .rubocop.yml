@@ -1,6 +1,6 @@
 AllCops:
   NewCops: enable
-  TargetRubyVersion: 3.2 # match gemspec and .github/workflows/actions.yml
+  TargetRubyVersion: 3.3 # match gemspec and .github/workflows/actions.yml
   SuggestExtensions: false
   Exclude:
   - '**/vendor/bundle/**/*'
