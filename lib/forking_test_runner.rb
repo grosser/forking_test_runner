@@ -278,10 +278,11 @@ module ForkingTestRunner
       wpipe.close
 
       buffer = +""
+      tee = !@options.fetch(:quiet) && !@options.fetch(:parallel)
 
-      while (ch = rpipe.read(1))
+      while (ch = rpipe.read(tee ? 1 : 4096))
         buffer << ch
-        $stdout.write(ch) if !@options.fetch(:quiet) && !@options.fetch(:parallel) # tee
+        $stdout.write(ch) if tee
       end
 
       Process.wait(child)
